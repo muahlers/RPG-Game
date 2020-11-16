@@ -1,21 +1,31 @@
-import 'phaser';
+import * as Phaser from 'phaser';
+import scenes from './scenes/scenes';
 
 const config = {
   type: Phaser.AUTO,
   width: 800,
   height: 500,
-  scene: {
-    preload,
-    create,
+  scene: scenes,
+  physics: {
+    default: 'arcade',
+    arcade: {
+      debug: false,
+      gravity: {
+        y: 0,
+      },
+    },
   },
+  pixelArt: true,
+  roundPixels: true,
 };
 
-const game = new Phaser.Game(config);
-
-function preload() {
-  console.log('this is the preload method');
+class Game extends Phaser.Game {
+  constructor() {
+    super(config);
+    this.scene.start('Boot');
+  }
 }
 
-function create() {
-  this.add.text(0, 0, 'Hello World 15');
-}
+window.onload = () => {
+  window.game = new Game();
+};
