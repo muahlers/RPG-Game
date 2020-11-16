@@ -5,8 +5,8 @@ const config = {
   width: 800,
   height: 500,
   scene: {
-      preload,
-      create
+    preload,
+    create,
   },
 };
 
@@ -17,5 +17,5 @@ function preload() {
 }
 
 function create() {
-  this.add.text(0, 0, 'Hello World 14');
+  this.add.text(0, 0, 'Hello World 15');
 }
