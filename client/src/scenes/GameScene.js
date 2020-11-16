@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser';
-import Map from '../classes/Map';
+import GameMap from '../classes/GameMap';
 import GameManager from '../game_manager/GameManager';
 import PlayerContainer from '../classes/player/PlayerContainer';
 import Chest from '../classes/Chest';
@@ -102,11 +102,11 @@ export default class GameScene extends Phaser.Scene {
 
   addCollisions() {
     // check for collisions between the player and the tiled blocked layer
-    this.physics.add.collider(this.player, this.map.blockedLayer);
+    this.physics.add.collider(this.player, this.gameMap.blockedLayer);
     // check for overlaps between player and chest game objects
     this.physics.add.overlap(this.player, this.chests, this.collectChest, null, this);
     // check for collisions between the monster group and the tiled blocked layer
-    this.physics.add.collider(this.monsters, this.map.blockedLayer);
+    this.physics.add.collider(this.monsters, this.gameMap.blockedLayer);
     // check for overlaps between the player's weapon and monster game objects
     this.physics.add.overlap(this.player.weapon, this.monsters, this.enemyOverlap, null, this);
   }
@@ -126,7 +126,7 @@ export default class GameScene extends Phaser.Scene {
 
   createMap() {
     // create map
-    this.map = new Map(this, 'map', 'background', 'background', 'blocked');
+    this.gameMap = new GameMap(this, 'map', 'background', 'background', 'blocked');
   }
 
   createGameManager() {
@@ -190,7 +190,7 @@ export default class GameScene extends Phaser.Scene {
       this.player.respawn(playerObject);
     });
 
-    this.gameManager = new GameManager(this, this.map.map.objects);
+    this.gameManager = new GameManager(this, this.gameMap.map.objects);
     this.gameManager.setup();
   }
 }
