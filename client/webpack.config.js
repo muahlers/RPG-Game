@@ -2,11 +2,15 @@ const path = require('path');
 const webpack = require('webpack');
 
 module.exports = {
-  entry: './src/index.js',
+  entry: ['./src/index.js'],
   output:{
-    path: path.resolve(__dirname, 'dist'),
-    publicPath: '/dist/',
-    filename: 'main-dev.js'
+    path: path.resolve(__dirname, 'build'),
+    publicPath: '/build/',
+    'filename': 'bundle.js'
+  },
+  devServer: {
+    contentBase: './build/',
+    watchContentBase: true
   },
   module:{
     rules: [
