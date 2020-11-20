@@ -38,6 +38,20 @@ mongoose.connection.on('error', (error) => {
 
 // setup Express App
 const app = express(); // Abro una instancia Express y la llamo app!
+const server = require('http').Server(app);
+const io = require('socket.io').listen(server);
+
+io.on('connection', (socket) => {
+  socket.on('disconnect', () => {
+    console.log('Player Disconnected');
+    console.log(socket.id);
+  });
+
+  // player connected to our game.
+  console.log('Player connected to our game');
+  console.log(socket.id);
+});
+
 const port = process.env.PORT || 3000; // Defino un Puerto a Usar por el Server.
 
 // update Express Settings
@@ -89,7 +103,7 @@ app.use((error, request, response, next) => {
 // server start listening when bd connection is establish.
 mongoose.connection.on('connected', () => {
   console.log('connected to mongo');
-  app.listen(port, () => {
+  server.listen(port, () => {
     console.log(`Server is Running in Port: ${port}`);
   });
 });
