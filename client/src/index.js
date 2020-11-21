@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser';
-import io from 'socket.io-client';
+import { io } from 'socket.io-client';
 import scenes from './scenes/scenes';
 
 const config = {
@@ -23,10 +23,13 @@ const config = {
 class Game extends Phaser.Game {
   constructor() {
     super(config);
-    const socket = io()('http://localhost:3000');
+    const socket = io('http://localhost:3000', {
+      reconnectionDelayMax: 10000,
+    });
     this.globals = {
       socket,
     };
+    console.log(socket);
     this.scene.start('Boot');
   }
 }
