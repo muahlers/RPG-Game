@@ -12,6 +12,7 @@ import passport from 'passport';
 import routes from './routes/main';
 import passwordRoutes from './routes/password';
 import secureRoutes from './routes/secure';
+import GameManager from './gameManager/GameManager';
 
 // setup mongo connections
 const uri = process.env.MONGO_CONNECTION_URL;
@@ -45,16 +46,10 @@ const io = require('socket.io')(server, {
   },
 });
 
-io.on('connection', (socket) => {
-  socket.on('disconnect', () => {
-    console.log('Player Disconnected');
-    console.log(socket.id);
-  });
-  // player connected to our game.
-  console.log('Player connected to our game');
-  console.log(socket.id);
-});
+const gameManager = new GameManager(io);
+gameManager.setup();
 
+//
 const port = process.env.PORT || 3000; // Defino un Puerto a Usar por el Server.
 
 // update Express Settings

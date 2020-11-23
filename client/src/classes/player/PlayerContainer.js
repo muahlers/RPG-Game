@@ -3,7 +3,7 @@ import Player from './Player';
 import Direction from '../../utils/direction';
 
 export default class PlayerContainer extends Phaser.GameObjects.Container {
-  constructor(scene, x, y, key, frame, health, maxHealth, id, attackAudio) {
+  constructor(scene, x, y, key, frame, health, maxHealth, id, attackAudio, mainPlayer) {
     super(scene, x, y);
     this.scene = scene; // the scene this container will be added to
     this.velocity = 160; // the velocity when moving our player
@@ -15,6 +15,7 @@ export default class PlayerContainer extends Phaser.GameObjects.Container {
     this.maxHealth = maxHealth;
     this.id = id;
     this.attackAudio = attackAudio;
+    this.mainPlayer = mainPlayer;
 
     // set a size on the container
     this.setSize(64, 64);
@@ -24,8 +25,11 @@ export default class PlayerContainer extends Phaser.GameObjects.Container {
     this.body.setCollideWorldBounds(true);
     // add the player container to our existing scene
     this.scene.add.existing(this);
-    // have the camera follow the player
-    this.scene.cameras.main.startFollow(this);
+
+    if (this.mainPlayer) {
+      // have the camera follow the player
+      this.scene.cameras.main.startFollow(this);
+    }
 
     // create the player
     this.player = new Player(this.scene, 0, 0, key, frame);
@@ -70,37 +74,40 @@ export default class PlayerContainer extends Phaser.GameObjects.Container {
   update(cursors) {
     this.body.setVelocity(0);
 
-    if (cursors.left.isDown) {
-      this.body.setVelocityX(-this.velocity);
-      this.currentDirection = Direction.LEFT;
-      this.weapon.setPosition(-40, 0);
-      this.player.flipX = false;
-    } else if (cursors.right.isDown) {
-      this.body.setVelocityX(this.velocity);
-      this.currentDirection = Direction.RIGHT;
-      this.weapon.setPosition(40, 0);
-      this.player.flipX = true;
+    if (this.mainPlayer) {
+      if (cursors.left.isDown) {
+        this.body.setVelocityX(-this.velocity);
+        this.currentDirection = Direction.LEFT;
+        this.flipX = false;
+        this.player.flipX = false;
+      } else if (cursors.right.isDown) {
+        this.body.setVelocityX(this.velocity);
+        this.currentDirection = Direction.RIGHT;
+        this.flipX = true;
+        this.player.flipX = true;
+      }
+
+      if (cursors.up.isDown) {
+        this.body.setVelocityY(-this.velocity);
+        this.currentDirection = Direction.UP;
+      } else if (cursors.down.isDown) {
+        this.body.setVelocityY(this.velocity);
+        this.currentDirection = Direction.DOWN;
+      }
+
+      if (Phaser.Input.Keyboard.JustDown(cursors.space) && !this.playerAttacking) {
+        this.attack();
+      }
     }
 
-    if (cursors.up.isDown) {
-      this.body.setVelocityY(-this.velocity);
-      this.currentDirection = Direction.UP;
+    if (this.currentDirection === Direction.UP) {
       this.weapon.setPosition(0, -40);
-    } else if (cursors.down.isDown) {
-      this.body.setVelocityY(this.velocity);
-      this.currentDirection = Direction.DOWN;
+    } else if (this.currentDirection === Direction.DOWN) {
       this.weapon.setPosition(0, 40);
-    }
-
-    if (Phaser.Input.Keyboard.JustDown(cursors.space) && !this.playerAttacking) {
-      this.weapon.alpha = 1;
-      this.playerAttacking = true;
-      this.attackAudio.play();
-      this.scene.time.delayedCall(150, () => {
-        this.weapon.alpha = 0;
-        this.playerAttacking = false;
-        this.swordHit = false;
-      }, [], this);
+    } else if (this.currentDirection === Direction.LEFT) {
+      this.weapon.setPosition(-40, 0);
+    } else if (this.currentDirection === Direction.RIGHT) {
+      this.weapon.setPosition(40, 0);
     }
 
     if (this.playerAttacking) {
@@ -125,5 +132,21 @@ export default class PlayerContainer extends Phaser.GameObjects.Container {
     }
 
     this.updateHealthBar();
+  }
+
+  updateFliX(flipX) {
+    this.flipX = flipX;
+    this.player.flipX = this.flipX;
+  }
+
+  attack() {
+    this.weapon.alpha = 1;
+    this.playerAttacking = true;
+    if (this.mainPlayer) this.attackAudio.play();
+    this.scene.time.delayedCall(150, () => {
+      this.weapon.alpha = 0;
+      this.playerAttacking = false;
+      this.swordHit = false;
+    }, [], this);
   }
 }

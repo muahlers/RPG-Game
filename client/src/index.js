@@ -4,8 +4,8 @@ import scenes from './scenes/scenes';
 
 const config = {
   type: Phaser.AUTO,
-  width: 800,
-  height: 500,
+  width: 1200,
+  height: 600,
   scene: scenes,
   physics: {
     default: 'arcade',
@@ -29,7 +29,6 @@ class Game extends Phaser.Game {
     this.globals = {
       socket,
     };
-    console.log(socket);
     this.scene.start('Boot');
   }
 }

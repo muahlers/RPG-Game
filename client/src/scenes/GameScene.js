@@ -11,7 +11,61 @@ export default class GameScene extends Phaser.Scene {
   }
 
   init() {
+    // Launch UI in parallel.
     this.scene.launch('Ui');
+    // get a reference to our socket.
+    this.socket = this.sys.game.globals.socket;
+    // Listen for socket events.
+    this.listenForSocketEvents();
+  }
+
+  listenForSocketEvents() {
+    // spawn players game objects
+    this.socket.on('currentPlayers', (players) => {
+      console.log('Current Palyers:');
+      console.log(players);
+
+      // Identifico aljugador Principal.
+      Object.keys(players).forEach((id) => {
+        if (players[id].id === this.socket.id) {
+          this.createPlayer(players[id], true);
+          this.addCollisions();
+        } else {
+          this.createPlayer(players[id], false);
+        }
+      });
+    });
+    // spawn monsters game objects
+    this.socket.on('currentMonsters', (monsters) => {
+      console.log('Current Monsters:');
+      console.log(monsters);
+    });
+    // spawn chests game objects
+    this.socket.on('currentChests', (chests) => {
+      console.log('Current Chests:');
+      console.log(chests);
+    });
+    // spawn player game objects to other players.
+    this.socket.on('spawnPlayer', (player) => {
+      console.log('Spwan New Palyer:');
+      this.createPlayer(player, false);
+      console.log(player);
+    });
+    // inform a player has moved.
+    this.socket.on('playerMoved', (player) => {
+      this.otherPlayers.getChildren().forEach((otherPlayer) => {
+        if (player.id === otherPlayer.id) {
+          otherPlayer.setPosition(player.x, player.y);
+          otherPlayer.updateHealthBar();
+          otherPlayer.updateFliX(player.flipX);
+          otherPlayer.playerAttacking = player.playerAttacking;
+          otherPlayer.currentDirection = player.currentDirection;
+          if (player.playerAttacking) {
+            otherPlayer.attack();
+          }
+        }
+      });
+    });
   }
 
   create() {
@@ -20,11 +74,32 @@ export default class GameScene extends Phaser.Scene {
     this.createGroups();
     this.createInput();
 
-    this.createGameManager();
+    // this.createGameManager();
+
+    // emit event to server that a new player joined.
+    this.socket.emit('newPlayer');
   }
 
   update() {
     if (this.player) this.player.update(this.cursors);
+
+    if (this.player) {
+      const {
+        x, y, flipX, playerAttacking, currentDirection,
+      } = this.player;
+      if (x !== this.player.oldPosition.x || y !== this.player.oldPosition.y
+      || flipX !== this.player.oldPosition.flipX
+      || playerAttacking !== this.player.oldPosition.playerAttacking) {
+        // Emito señal que jugador se movio.
+        this.socket.emit('playerMovement', {
+          x, y, flipX, playerAttacking, currentDirection,
+        });
+        // Guardo la nueva posición del jugador.
+        this.player.oldPosition = {
+          x, y, flipX, playerAttacking, currentDirection,
+        };
+      }
+    }
   }
 
   createAudio() {
@@ -35,8 +110,8 @@ export default class GameScene extends Phaser.Scene {
     this.monsterDeathAudio = this.sound.add('enemyDeath', { loop: false, volume: 0.2 });
   }
 
-  createPlayer(playerObject) {
-    this.player = new PlayerContainer(
+  createPlayer(playerObject, mainPlayer) {
+    const newPlayer = new PlayerContainer(
       this,
       playerObject.x * 2,
       playerObject.y * 2,
@@ -46,7 +121,20 @@ export default class GameScene extends Phaser.Scene {
       playerObject.maxHealth,
       playerObject.id,
       this.playerAttackAudio,
+      mainPlayer,
     );
+
+    if (!mainPlayer) {
+      this.otherPlayers.add(newPlayer);
+    } else {
+      this.player = newPlayer;
+      // save player postion in the world.
+      this.player.oldPosition = {
+        x: this.player.x,
+        y: this.player.y,
+        flipX: this.player.flipX,
+      };
+    }
   }
 
   createGroups() {
@@ -55,6 +143,9 @@ export default class GameScene extends Phaser.Scene {
     // create a monster group
     this.monsters = this.physics.add.group();
     this.monsters.runChildUpdate = true;
+    // create an others player group.
+    this.otherPlayers = this.physics.add.group();
+    this.otherPlayers.runChildUpdate = true;
   }
 
   spawnChest(chestObject) {
@@ -130,10 +221,10 @@ export default class GameScene extends Phaser.Scene {
   }
 
   createGameManager() {
-    this.events.on('spawnPlayer', (playerObject) => {
-      this.createPlayer(playerObject);
-      this.addCollisions();
-    });
+    // this.events.on('spawnPlayer', (playerObject) => {
+    //  this.createPlayer(playerObject);
+    //  this.addCollisions();
+    // });
 
     this.events.on('chestSpawned', (chest) => {
       this.spawnChest(chest);
