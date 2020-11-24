@@ -1,6 +1,5 @@
 import * as Phaser from 'phaser';
 import GameMap from '../classes/GameMap';
-import GameManager from '../game_manager/GameManager';
 import PlayerContainer from '../classes/player/PlayerContainer';
 import Chest from '../classes/Chest';
 import Monster from '../classes/Monster';
@@ -37,13 +36,15 @@ export default class GameScene extends Phaser.Scene {
     });
     // spawn monsters game objects
     this.socket.on('currentMonsters', (monsters) => {
-      console.log('Current Monsters:');
-      console.log(monsters);
+      Object.keys(monsters).forEach((id) => {
+        this.spawnMonster(monsters[id]);
+      });
     });
     // spawn chests game objects
     this.socket.on('currentChests', (chests) => {
-      console.log('Current Chests:');
-      console.log(chests);
+      Object.keys(chests).forEach((id) => {
+        this.spawnChest(chests[id]);
+      });
     });
     // spawn player game objects to other players.
     this.socket.on('spawnPlayer', (player) => {
@@ -66,15 +67,88 @@ export default class GameScene extends Phaser.Scene {
         }
       });
     });
-  }
+
+    this.socket.on('chestSpawned', (chest) => {
+      this.spawnChest(chest);
+    });
+
+    this.socket.on('monsterSpawned', (monster) => {
+      this.spawnMonster(monster);
+    });
+
+    this.socket.on('chestRemoved', (chestId) => {
+      this.chests.getChildren().forEach((chest) => {
+        if (chest.id === chestId) {
+          chest.makeInactive();
+        }
+      });
+    });
+
+    this.socket.on('monsterRemoved', (monsterId) => {
+      this.monsters.getChildren().forEach((monster) => {
+        if (monster.id === monsterId) {
+          monster.makeInactive();
+          this.monsterDeathAudio.play();
+        }
+      });
+    });
+
+    this.socket.on('monsterMovement', (monsters) => {
+      this.monsters.getChildren().forEach((monster) => {
+        Object.keys(monsters).forEach((monsterId) => {
+          if (monster.id === monsterId) {
+            this.physics.moveToObject(monster, monsters[monsterId], 40);
+          }
+        });
+      });
+    });
+
+    this.socket.on('updateScore', (gold) => {
+      this.events.emit('updateScore', gold);
+    });
+
+    this.socket.on('updatePlayerHealth', (playerId, health) => {
+      if (this.player.id === playerId) {
+        if (health < this.player.health) {
+          this.playerDamageAudio.play();
+        }
+        this.player.updateHealth(health);
+      } else {
+        this.otherPlayers.getChildren().forEach((player) => {
+          if (player.id === playerId) {
+            player.updateHealth(health);
+          }
+        });
+      }
+    });
+
+    this.socket.on('updateMonsterHealth', (monsterId, health) => {
+      this.monsters.getChildren().forEach((monster) => {
+        if (monster.id === monsterId) {
+          monster.updateHealth(health);
+        }
+      });
+    });
+
+    this.socket.on('respawnPlayer', (objPlayer) => {
+      if (this.player.id === objPlayer.id) {
+        this.playerDeathAudio.play();
+        this.player.respawn(objPlayer);
+      } else {
+        this.otherPlayers.getChildren().forEach((player) => {
+          if (player.id === objPlayer.id) {
+            this.player.respawn(player);
+          }
+        });
+      }
+    });
+}
 
   create() {
     this.createMap();
     this.createAudio();
     this.createGroups();
     this.createInput();
-
-    // this.createGameManager();
 
     // emit event to server that a new player joined.
     this.socket.emit('newPlayer');
@@ -205,14 +279,14 @@ export default class GameScene extends Phaser.Scene {
   enemyOverlap(weapon, enemy) {
     if (this.player.playerAttacking && !this.player.swordHit) {
       this.player.swordHit = true;
-      this.events.emit('monsterAttacked', enemy.id, this.player.id);
+      this.socket.emit('monsterAttacked', enemy.id);
     }
   }
 
   collectChest(player, chest) {
     // play gold pickup sound
     this.goldPickupAudio.play();
-    this.events.emit('pickUpChest', chest.id, player.id);
+    this.socket.emit('pickUpChest', chest.id);
   }
 
   createMap() {
@@ -220,68 +294,4 @@ export default class GameScene extends Phaser.Scene {
     this.gameMap = new GameMap(this, 'map', 'background', 'background', 'blocked');
   }
 
-  createGameManager() {
-    // this.events.on('spawnPlayer', (playerObject) => {
-    //  this.createPlayer(playerObject);
-    //  this.addCollisions();
-    // });
-
-    this.events.on('chestSpawned', (chest) => {
-      this.spawnChest(chest);
-    });
-
-    this.events.on('monsterSpawned', (monster) => {
-      this.spawnMonster(monster);
-    });
-
-    this.events.on('chestRemoved', (chestId) => {
-      this.chests.getChildren().forEach((chest) => {
-        if (chest.id === chestId) {
-          chest.makeInactive();
-        }
-      });
-    });
-
-    this.events.on('monsterRemoved', (monsterId) => {
-      this.monsters.getChildren().forEach((monster) => {
-        if (monster.id === monsterId) {
-          monster.makeInactive();
-          this.monsterDeathAudio.play();
-        }
-      });
-    });
-
-    this.events.on('updateMonsterHealth', (monsterId, health) => {
-      this.monsters.getChildren().forEach((monster) => {
-        if (monster.id === monsterId) {
-          monster.updateHealth(health);
-        }
-      });
-    });
-
-    this.events.on('monsterMovement', (monsters) => {
-      this.monsters.getChildren().forEach((monster) => {
-        Object.keys(monsters).forEach((monsterId) => {
-          if (monster.id === monsterId) {
-            this.physics.moveToObject(monster, monsters[monsterId], 40);
-          }
-        });
-      });
-    });
-
-    this.events.on('updatePlayerHealth', (playerId, health) => {
-      if (health < this.player.health) {
-        this.playerDamageAudio.play();
-      }
-      this.player.updateHealth(health);
-    });
-
-    this.events.on('respawnPlayer', (playerObject) => {
-      this.playerDeathAudio.play();
-      this.player.respawn(playerObject);
-    });
-
-    this.gameManager = new GameManager(this, this.gameMap.map.objects);
-    this.gameManager.setup();
-  }
 }
