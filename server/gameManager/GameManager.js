@@ -141,13 +141,39 @@ export default class GameManager {
               socket.emit('updateScore', this.players[socket.id].gold);
 
               // respawn the player
-              this.players[socket.id].respawn();
+              this.players[socket.id].respawn(this.players);
               this.io.emit('respawnPlayer', this.players[socket.id]);
             }
           }
         }
       });
 
+      socket.on('attackedPlayer', (enemyPlayerId) => {
+        if (this.players[enemyPlayerId]) {
+          // get required information
+          const { gold } = this.players[enemyPlayerId];
+
+          // substract health from attacked player
+          this.players[enemyPlayerId].updateHealth(-1);
+
+          // check iff enemy payer is dead, if it's give half gold to other player.
+          if (this.players[enemyPlayerId].health < 1) {
+            // give player half gold
+            this.players[socket.id].updateGold(gold);
+            this.io.emit('updateScore', this.players[socket.id].gold);
+
+            // respawn enemy player.
+            this.players[enemyPlayerId].respawn(this.players);
+            this.io.emit('respawnPlayer', this.players[enemyPlayerId]);
+
+            // reset the attacked player gold
+            this.players[enemyPlayerId].updateGold(-gold);
+            this.io.to(`${enemyPlayerId}`).emit('updateScore', this.players[enemyPlayerId].gold);
+          } else {
+            this.io.emit('updatePlayerHealth', enemyPlayerId, this.players[enemyPlayerId].health);
+          }
+        }
+      });
       // player connected to our game.
       console.log('Player connected to our game');
       console.log(socket.id);
@@ -221,7 +247,7 @@ export default class GameManager {
   }
 
   spawnPlayer(playerId) {
-    const player = new PlayerModel(this.playerLocations, playerId);
+    const player = new PlayerModel(this.playerLocations, playerId, this.players);
     this.players[playerId] = player;
   }
 }

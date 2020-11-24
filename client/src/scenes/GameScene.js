@@ -67,15 +67,15 @@ export default class GameScene extends Phaser.Scene {
         }
       });
     });
-
+    // inform that a chest has been spawned.
     this.socket.on('chestSpawned', (chest) => {
       this.spawnChest(chest);
     });
-
+    // inform that a monster has been spawned.
     this.socket.on('monsterSpawned', (monster) => {
       this.spawnMonster(monster);
     });
-
+    // inform that a chest has been removed.
     this.socket.on('chestRemoved', (chestId) => {
       this.chests.getChildren().forEach((chest) => {
         if (chest.id === chestId) {
@@ -83,7 +83,7 @@ export default class GameScene extends Phaser.Scene {
         }
       });
     });
-
+    // inform that a monster has been removed.
     this.socket.on('monsterRemoved', (monsterId) => {
       this.monsters.getChildren().forEach((monster) => {
         if (monster.id === monsterId) {
@@ -92,7 +92,7 @@ export default class GameScene extends Phaser.Scene {
         }
       });
     });
-
+    // inform that a monster position has change.
     this.socket.on('monsterMovement', (monsters) => {
       this.monsters.getChildren().forEach((monster) => {
         Object.keys(monsters).forEach((monsterId) => {
@@ -102,11 +102,11 @@ export default class GameScene extends Phaser.Scene {
         });
       });
     });
-
+    // inform that player score has changed.
     this.socket.on('updateScore', (gold) => {
       this.events.emit('updateScore', gold);
     });
-
+    // inform that player health has changed.
     this.socket.on('updatePlayerHealth', (playerId, health) => {
       if (this.player.id === playerId) {
         if (health < this.player.health) {
@@ -121,7 +121,7 @@ export default class GameScene extends Phaser.Scene {
         });
       }
     });
-
+    // inform that a monster health has changed.
     this.socket.on('updateMonsterHealth', (monsterId, health) => {
       this.monsters.getChildren().forEach((monster) => {
         if (monster.id === monsterId) {
@@ -129,7 +129,7 @@ export default class GameScene extends Phaser.Scene {
         }
       });
     });
-
+    // inform that player has to be respwned.
     this.socket.on('respawnPlayer', (objPlayer) => {
       if (this.player.id === objPlayer.id) {
         this.playerDeathAudio.play();
@@ -141,6 +141,14 @@ export default class GameScene extends Phaser.Scene {
           }
         });
       }
+    });
+    // inform that a player has left the game.
+    this.socket.on('desconectar', (playerId) => {
+      this.otherPlayers.getChildren().forEach((player) => {
+        if (player.id === playerId) {
+          player.cleanUp();
+        }
+      });
     });
 }
 
@@ -275,7 +283,23 @@ export default class GameScene extends Phaser.Scene {
     // check for overlaps between the player's weapon and monster game objects
     this.physics.add.overlap(this.player.weapon, this.monsters, this.enemyOverlap, null, this);
     // check for collisions between the player and other players in the game.
-    this.physics.add.collider(this.player, this.otherPlayers);
+    this.physics.add.collider(this.player, this.otherPlayers, this.pvpCollider, null, this);
+    // check for overlaps between the player's weapon and other player game objects.
+    this.physics.add.overlap(
+      this.player.weapon, this.otherPlayers, this.weaponOverlapEnemy, false, this,
+    );
+  }
+
+  pvpCollider(player, otherPlayer) {
+    this.player.body.setVelocity(0);
+    otherPlayer.body.setVelocity(0);
+  }
+
+  weaponOverlapEnemy(weapon, enemyPlayer) {
+    if (this.player.playerAttacking && !this.player.swordHit) {
+      this.player.swordHit = true;
+      this.socket.emit('attackedPlayer', enemyPlayer.id);
+    }
   }
 
   enemyOverlap(weapon, enemy) {
