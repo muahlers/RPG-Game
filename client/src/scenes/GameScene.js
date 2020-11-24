@@ -18,7 +18,7 @@ export default class GameScene extends Phaser.Scene {
     this.listenForSocketEvents();
   }
 
-  listenForSocketEvents() {
+  listenForSocketEvents() { // Connection with server logic.
     // spawn players game objects
     this.socket.on('currentPlayers', (players) => {
       console.log('Current Palyers:');
@@ -274,6 +274,8 @@ export default class GameScene extends Phaser.Scene {
     this.physics.add.collider(this.monsters, this.gameMap.blockedLayer);
     // check for overlaps between the player's weapon and monster game objects
     this.physics.add.overlap(this.player.weapon, this.monsters, this.enemyOverlap, null, this);
+    // check for collisions between the player and other players in the game.
+    this.physics.add.collider(this.player, this.otherPlayers);
   }
 
   enemyOverlap(weapon, enemy) {
@@ -293,5 +295,4 @@ export default class GameScene extends Phaser.Scene {
     // create map
     this.gameMap = new GameMap(this, 'map', 'background', 'background', 'blocked');
   }
-
 }
