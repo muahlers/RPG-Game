@@ -150,7 +150,7 @@ export default class GameScene extends Phaser.Scene {
         }
       });
     });
-}
+  }
 
   create() {
     this.createMap();
