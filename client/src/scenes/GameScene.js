@@ -3,6 +3,7 @@ import GameMap from '../classes/GameMap';
 import PlayerContainer from '../classes/player/PlayerContainer';
 import Chest from '../classes/Chest';
 import Monster from '../classes/Monster';
+import { getCookie } from '../utils/utils';
 
 export default class GameScene extends Phaser.Scene {
   constructor() {
@@ -150,6 +151,11 @@ export default class GameScene extends Phaser.Scene {
         }
       });
     });
+
+    this.socket.on('invalidToken', () => {
+      window.alert('Token is not longer valid,please login again.');
+      window.location.reload();
+    });
   }
 
   create() {
@@ -159,7 +165,7 @@ export default class GameScene extends Phaser.Scene {
     this.createInput();
 
     // emit event to server that a new player joined.
-    this.socket.emit('newPlayer');
+    this.socket.emit('newPlayer', getCookie('jwt'));
   }
 
   update() {

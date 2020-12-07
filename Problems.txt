@@ -1,0 +1,1 @@
+El build que construi en Localhost no logra comunicarse con el servidor. Cors?

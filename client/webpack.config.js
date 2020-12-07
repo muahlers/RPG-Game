@@ -1,3 +1,4 @@
+require('dotenv').config();
 const path = require('path');
 const webpack = require('webpack');
 
@@ -28,7 +29,8 @@ module.exports = {
   plugins: [
     new webpack.DefinePlugin({
       'CANVAS_RENDER': JSON.stringify(true),
-      'WEBGL_RENDER': JSON.stringify(true)
+      'WEBGL_RENDER': JSON.stringify(true),
+      'SERVER_URL': JSON.stringify(process.env.SERVER_URL)
     })
   ]
 }
