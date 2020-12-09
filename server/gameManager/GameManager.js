@@ -201,7 +201,7 @@ export default class GameManager {
         }
       });
       // player connected to our game.
-      console.log('Player connected to our game');
+      console.log('Player connected to our game :)');
       console.log(`Socket ID: ${socket.id}`);
     });
   }
