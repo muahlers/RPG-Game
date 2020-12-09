@@ -60,7 +60,7 @@ app.use(cookieParser());
 // Allow requests from other servers.
 app.use(cors(
   {
-    credentials: true,
+    credentials: false,
     origin: process.env.CORS_ORIGIN,
     allowedHeaders: ['Content-Type', 'Authorization'],
   },
