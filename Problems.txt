@@ -8,5 +8,8 @@ Cuando un segundo jugador entra se spawnean 2 jugadores en vez de 1.
 
 Cuando un jugador mata a otro jugador su medidor de vida baja casi a cero, luego se recupera cuando se
 actualiza matando a otro enemigo.
+<<<<<<< HEAD
 
 El jugador al desconectarse no desaparece.
+=======
+>>>>>>> 32bedf33bf03f3887d1c05ecddc78f583374615e
