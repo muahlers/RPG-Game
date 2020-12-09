@@ -1,1 +1,12 @@
 El build que construi en Localhost no logra comunicarse con el servidor. Cors?
+
+No puedo mandar emails por Gmail
+
+Si hay mas cookies me falla la función para atrapar cookies [getCookie]
+
+Cuando un segundo jugador entra se spawnean 2 jugadores en vez de 1.
+
+Cuando un jugador mata a otro jugador su medidor de vida baja casi a cero, luego se recupera cuando se
+actualiza matando a otro enemigo.
+
+Cuando un jugador se desconecta, no desparece!

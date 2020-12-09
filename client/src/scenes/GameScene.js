@@ -20,9 +20,9 @@ export default class GameScene extends Phaser.Scene {
   }
 
   listenForSocketEvents() { // Connection with server logic.
-    // spawn players game objects
+    // spawn main players game objects from server to new client.
     this.socket.on('currentPlayers', (players) => {
-      console.log('Current Palyers:');
+      console.log('Current Players:');
       console.log(players);
 
       // Identifico aljugador Principal.
@@ -35,21 +35,21 @@ export default class GameScene extends Phaser.Scene {
         }
       });
     });
-    // spawn monsters game objects
+    // spawn monsters game objects from server to new client.
     this.socket.on('currentMonsters', (monsters) => {
       Object.keys(monsters).forEach((id) => {
         this.spawnMonster(monsters[id]);
       });
     });
-    // spawn chests game objects
+    // spawn chests game objects from server to new client.
     this.socket.on('currentChests', (chests) => {
       Object.keys(chests).forEach((id) => {
         this.spawnChest(chests[id]);
       });
     });
-    // spawn player game objects to other players.
+    // spawn new players game objects from server to other clients.
     this.socket.on('spawnPlayer', (player) => {
-      console.log('Spwan New Palyer:');
+      console.log('Spwan New Player to all Servers:');
       this.createPlayer(player, false);
       console.log(player);
     });
@@ -98,7 +98,7 @@ export default class GameScene extends Phaser.Scene {
       this.monsters.getChildren().forEach((monster) => {
         Object.keys(monsters).forEach((monsterId) => {
           if (monster.id === monsterId) {
-            this.physics.moveToObject(monster, monsters[monsterId], 40);
+            this.physics.moveToObject(monster, monsters[monsterId], 60);
           }
         });
       });
@@ -151,10 +151,10 @@ export default class GameScene extends Phaser.Scene {
         }
       });
     });
-
+    // inform that the token as expire.
     this.socket.on('invalidToken', () => {
-      window.alert('Token is not longer valid,please login again.');
-      window.location.reload();
+      // window.alert('Token is not longer valid,please login again.');
+      // window.location.reload();
     });
   }
 
@@ -165,6 +165,7 @@ export default class GameScene extends Phaser.Scene {
     this.createInput();
 
     // emit event to server that a new player joined.
+    console.log(`from Cookie: ${getCookie('jwt')}`);
     this.socket.emit('newPlayer', getCookie('jwt'));
   }
 
@@ -190,12 +191,34 @@ export default class GameScene extends Phaser.Scene {
     }
   }
 
+  // Create Methods ////////////////////////////////
+
+  createMap() {
+    // create map
+    this.gameMap = new GameMap(this, 'map', 'background', 'background', 'blocked');
+  }
+
   createAudio() {
     this.goldPickupAudio = this.sound.add('goldSound', { loop: false, volume: 0.3 });
     this.playerAttackAudio = this.sound.add('playerAttack', { loop: false, volume: 0.01 });
     this.playerDamageAudio = this.sound.add('playerDamage', { loop: false, volume: 0.2 });
     this.playerDeathAudio = this.sound.add('playerDeath', { loop: false, volume: 0.2 });
     this.monsterDeathAudio = this.sound.add('enemyDeath', { loop: false, volume: 0.2 });
+  }
+
+  createGroups() {
+    // create a chest group
+    this.chests = this.physics.add.group();
+    // create a monster group
+    this.monsters = this.physics.add.group();
+    this.monsters.runChildUpdate = true;
+    // create an others player group.
+    this.otherPlayers = this.physics.add.group();
+    this.otherPlayers.runChildUpdate = true;
+  }
+
+  createInput() {
+    this.cursors = this.input.keyboard.createCursorKeys();
   }
 
   createPlayer(playerObject, mainPlayer) {
@@ -225,16 +248,24 @@ export default class GameScene extends Phaser.Scene {
     }
   }
 
-  createGroups() {
-    // create a chest group
-    this.chests = this.physics.add.group();
-    // create a monster group
-    this.monsters = this.physics.add.group();
-    this.monsters.runChildUpdate = true;
-    // create an others player group.
-    this.otherPlayers = this.physics.add.group();
-    this.otherPlayers.runChildUpdate = true;
+  addCollisions() {
+    // check for collisions between the player and the tiled blocked layer
+    this.physics.add.collider(this.player, this.gameMap.blockedLayer);
+    // check for overlaps between player and chest game objects
+    this.physics.add.overlap(this.player, this.chests, this.collectChest, null, this);
+    // check for collisions between the monster group and the tiled blocked layer
+    this.physics.add.collider(this.monsters, this.gameMap.blockedLayer);
+    // check for overlaps between the player's weapon and monster game objects
+    this.physics.add.overlap(this.player.weapon, this.monsters, this.enemyOverlap, null, this);
+    // check for collisions between the player and other players in the game.
+    this.physics.add.collider(this.player, this.otherPlayers, this.pvpCollider, null, this);
+    // check for overlaps between the player's weapon and other player game objects.
+    this.physics.add.overlap(
+      this.player.weapon, this.otherPlayers, this.weaponOverlapEnemy, false, this,
+    );
   }
+
+  // /////////////////////////////////////////////
 
   spawnChest(chestObject) {
     let chest = this.chests.getFirstDead();
@@ -275,27 +306,6 @@ export default class GameScene extends Phaser.Scene {
     }
   }
 
-  createInput() {
-    this.cursors = this.input.keyboard.createCursorKeys();
-  }
-
-  addCollisions() {
-    // check for collisions between the player and the tiled blocked layer
-    this.physics.add.collider(this.player, this.gameMap.blockedLayer);
-    // check for overlaps between player and chest game objects
-    this.physics.add.overlap(this.player, this.chests, this.collectChest, null, this);
-    // check for collisions between the monster group and the tiled blocked layer
-    this.physics.add.collider(this.monsters, this.gameMap.blockedLayer);
-    // check for overlaps between the player's weapon and monster game objects
-    this.physics.add.overlap(this.player.weapon, this.monsters, this.enemyOverlap, null, this);
-    // check for collisions between the player and other players in the game.
-    this.physics.add.collider(this.player, this.otherPlayers, this.pvpCollider, null, this);
-    // check for overlaps between the player's weapon and other player game objects.
-    this.physics.add.overlap(
-      this.player.weapon, this.otherPlayers, this.weaponOverlapEnemy, false, this,
-    );
-  }
-
   pvpCollider(player, otherPlayer) {
     this.player.body.setVelocity(0);
     otherPlayer.body.setVelocity(0);
@@ -319,10 +329,5 @@ export default class GameScene extends Phaser.Scene {
     // play gold pickup sound
     this.goldPickupAudio.play();
     this.socket.emit('pickUpChest', chest.id);
-  }
-
-  createMap() {
-    // create map
-    this.gameMap = new GameMap(this, 'map', 'background', 'background', 'blocked');
   }
 }
