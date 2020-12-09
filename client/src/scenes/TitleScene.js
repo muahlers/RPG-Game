@@ -18,7 +18,7 @@ export default class TitleScene extends Phaser.Scene {
       'button1',
       'button2',
       'Login',
-      this.startScene.bind(this, 'Game'),
+      this.startScene.bind(this, 'Login'),
     );
     // create the SignUp game button
     this.signupButton = new UiButton(
