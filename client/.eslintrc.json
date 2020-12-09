@@ -5,6 +5,7 @@
   } ,
   "rules": {
     "no-console": "off",
-    "no-alert": "off"
+    "no-alert": "off",
+    "no-undef": "off"
   }
 }
