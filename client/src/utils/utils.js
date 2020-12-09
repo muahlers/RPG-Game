@@ -66,9 +66,9 @@ export function refreshTokenInterval() {
     postData(`${SERVER_URL}/token`, { refreshToken: getCookie('refreshJWT') })
       .then(() => {})
       .catch((error) => {
-        console.log(error.message);
-        window.alert('Token is not longer valid, please login again.');
-        window.location.replace('/index.html');
+        // console.log(error.message);
+        // window.alert('Token is not longer valid, please login again.');
+        // window.location.replace('/index.html');
       });
-  });
+  }, 3000);
 }

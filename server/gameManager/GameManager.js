@@ -67,11 +67,11 @@ export default class GameManager {
       socket.on('newPlayer', (token) => {
         try {
           // validate token, if valid send game information, else reject login.
-          const decoded = jwt.verify(token, process.env.JWT_SECRET);
+          // const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
           // get player's name
-          const { name } = decoded.user;
-
+          //const { name } = decoded.user;
+          const name = 'test';
           // create a new Player
           this.spawnPlayer(socket.id, name);
 
@@ -87,7 +87,7 @@ export default class GameManager {
           // inform the other players of the new player that joined.
           socket.broadcast.emit('spawnPlayer', this.players[socket.id]);
         } catch (error) {
-          console.log(error.message);
+          console.log(error);
           socket.emit('invalidToken');
         }
         // create a new Player
@@ -202,7 +202,7 @@ export default class GameManager {
       });
       // player connected to our game.
       console.log('Player connected to our game');
-      console.log(socket.id);
+      console.log(`Socket ID: ${socket.id}`);
     });
   }
 

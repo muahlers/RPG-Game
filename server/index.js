@@ -1,6 +1,3 @@
-// Variables en Archivo .env
-require('dotenv').config();
-
 import express from 'express'; // Requiro Paquetes Express en node_modules
 import bodyParser from 'body-parser'; // Requiro Paquetes Body Parser en node_modules
 import cors from 'cors'; // Requiro Paquetes de Cors en node_modules
@@ -13,6 +10,9 @@ import routes from './routes/main';
 import passwordRoutes from './routes/password';
 import secureRoutes from './routes/secure';
 import GameManager from './gameManager/GameManager';
+
+// Variables en Archivo .env
+require('dotenv').config();
 
 // setup mongo connections
 const uri = process.env.MONGO_CONNECTION_URL;
@@ -42,7 +42,7 @@ const app = express(); // Abro una instancia Express y la llamo app!
 const server = require('http').createServer(app);
 const io = require('socket.io')(server, {
   cors: {
-    origin: process.env.CORS_ORIGIN,
+    // origin: process.env.CORS_ORIGIN,
   },
 });
 
