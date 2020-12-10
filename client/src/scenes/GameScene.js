@@ -16,6 +16,7 @@ export default class GameScene extends Phaser.Scene {
     // get a reference to our socket.
     this.socket = this.sys.game.globals.socket;
     // Listen for socket events.
+    console.log('In Game Scene');
     this.listenForSocketEvents();
   }
 
@@ -160,13 +161,14 @@ export default class GameScene extends Phaser.Scene {
 
   create() {
     this.createMap();
+    console.log('In Game Scene II');
     this.createAudio();
     this.createGroups();
     this.createInput();
 
     // emit event to server that a new player joined.
-    console.log(`from Cookie: ${getCookie('jwt')}`);
-    this.socket.emit('newPlayer', getCookie('jwt'));
+    // console.log(`from Cookie: ${getCookie('jwt')}`);
+    // this.socket.emit('newPlayer', getCookie('jwt'));
   }
 
   update() {

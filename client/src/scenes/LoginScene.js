@@ -21,11 +21,12 @@ export default class LoginScene extends CredentialBaseScene {
   login() {
     const loginValue = this.loginInput.value;
     const passwordValue = this.passwordInput.value;
-
+    console.log(`going to log in :${loginValue} ${passwordValue}`);
     postData(`${SERVER_URL}/login`, { email: loginValue, password: passwordValue })
       .then((response) => {
         if (response.status === '200') {
-          refreshTokenInterval();
+          console.log(response.status);
+          // refreshTokenInterval();
           this.startScene('Game');
         } else {
           console.log(response.status);

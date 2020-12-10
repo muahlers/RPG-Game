@@ -8,6 +8,8 @@ export function randomNumber(min, max) {
 }
 
 export function postData(url, data = {}) {
+  console.log(`inside postData(): ${url}`);
+  console.log(JSON.stringify(data));
   return fetch(url, {
     method: 'POST',
     mode: 'cors',
