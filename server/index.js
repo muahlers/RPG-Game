@@ -40,11 +40,11 @@ mongoose.connection.on('error', (error) => {
 // setup Express App
 const app = express(); // Abro una instancia Express y la llamo app!
 const server = require('http').createServer(app);
-const io = require('socket.io')(server, {
+const io = require('socket.io')(server/* ,  {
   cors: {
     // origin: process.env.CORS_ORIGIN,
   },
-});
+} */);
 
 const gameManager = new GameManager(io);
 gameManager.setup();
@@ -58,13 +58,13 @@ app.use(bodyParser.json()); // parse application/json
 app.use(cookieParser());
 
 // Allow requests from other servers.
-app.use(cors(
-  /*{
+/* app.use(cors(
+  {
     credentials: true,
     origin: process.env.CORS_ORIGIN,
     allowedHeaders: ['Content-Type', 'Authorization'],
-  },*/
-));
+  },
+)); */
 
 // require  passport autho
 require('./auth/auth');

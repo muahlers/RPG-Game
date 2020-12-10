@@ -1,7 +1,6 @@
 import express from 'express';
 import passport from 'passport';
 import jwt from 'jsonwebtoken';
-import cors from 'cors';
 
 const tokenList = {};
 
@@ -35,7 +34,7 @@ router.post('/signup', passport.authenticate('signup', { session: false }), asyn
   response.status(200).json({ message: 'sign up was successful', status: '200' });
 });
 
-router.post('/login', cors(), async (request, response, next) => {
+router.post('/login', async (request, response, next) => {
   passport.authenticate('login', async (error, user) => {
     try {
       if (error) {
