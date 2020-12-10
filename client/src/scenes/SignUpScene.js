@@ -37,11 +37,13 @@ export default class SignUpScene extends CredentialBaseScene {
             console.log(response.message);
             this.startScene('Login');
           } else {
+            console.log(response.status);
             console.log(response.error);
             window.alert('Invalid Username or Password');
           }
         })
         .catch((error) => {
+          console.log(response.status);
           console.log(error.message);
           window.alert('Invalid Username or Password');
         });

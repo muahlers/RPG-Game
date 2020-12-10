@@ -70,5 +70,5 @@ export function refreshTokenInterval() {
         // window.alert('Token is not longer valid, please login again.');
         // window.location.replace('/index.html');
       });
-  }, 3000);
+  });
 }
