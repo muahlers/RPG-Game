@@ -60,14 +60,6 @@ app.use(cookieParser());
 // Allow requests from other servers.
 
 app.use(cors());
-app.options(true, cors());
-/* app.use(cors(
-  {
-    // credentials: true,
-    // origin: process.env.CORS_ORIGIN,
-    // allowedHeaders: ['Content-Type', 'Authorization'],
-  },
-)); */
 
 // require  passport autho
 require('./auth/auth');

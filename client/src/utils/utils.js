@@ -14,7 +14,7 @@ export function postData(url, data = {}) {
     method: 'POST',
     mode: 'cors',
     cache: 'no-cache',
-    credentials: 'include', // needed for cookies
+    credentials: 'same-origin', // 'include', // needed for cookies
     headers: {
       'Content-Type': 'application/json',
     },
@@ -47,10 +47,12 @@ export function createInputField(inputType, name, id, className, placeholder) {
   return inputField;
 }
 
-export function getCookie(cname) {
+export function getCookie(cname) { // Esta funcion no funciona
+  console.log('Inside getCookie');
   const name = `${cname}=`;
   const decodedCookie = decodeURIComponent(document.cookie);
   const ca = decodedCookie.split(';');
+  console.log(`Cookie: ${decodeURIComponent(document.cookie)}`);
   for (let i = 0; i < ca.length; i += 1) {
     let c = ca[i];
     while (c.charAt(0) === '') {
@@ -64,11 +66,13 @@ export function getCookie(cname) {
 }
 
 export function refreshTokenInterval() {
+  console.log('Inside refresInterval');
+  console.log(`getCookie: ${getCookie('refreshJwt')}`);
   setInterval(() => {
-    postData(`${SERVER_URL}/token`, { refreshToken: getCookie('refreshJWT') })
+    postData(`${SERVER_URL}/token`, { refreshToken: getCookie('refreshJwt') })
       .then(() => {})
       .catch((error) => {
-        // console.log(error.message);
+        console.log(error.message);
         // window.alert('Token is not longer valid, please login again.');
         // window.location.replace('/index.html');
       });

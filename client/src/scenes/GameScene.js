@@ -3,7 +3,7 @@ import GameMap from '../classes/GameMap';
 import PlayerContainer from '../classes/player/PlayerContainer';
 import Chest from '../classes/Chest';
 import Monster from '../classes/Monster';
-import { getCookie } from '../utils/utils';
+// import { getCookie } from '../utils/utils';
 
 export default class GameScene extends Phaser.Scene {
   constructor() {
@@ -169,6 +169,7 @@ export default class GameScene extends Phaser.Scene {
     // emit event to server that a new player joined.
     // console.log(`from Cookie: ${getCookie('jwt')}`);
     // this.socket.emit('newPlayer', getCookie('jwt'));
+    this.socket.emit('newPlayer');
   }
 
   update() {
