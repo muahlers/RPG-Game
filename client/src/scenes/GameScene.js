@@ -161,7 +161,6 @@ export default class GameScene extends Phaser.Scene {
 
   create() {
     this.createMap();
-    console.log('In Game Scene II');
     this.createAudio();
     this.createGroups();
     this.createInput();

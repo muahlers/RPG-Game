@@ -64,15 +64,17 @@ export default class GameManager {
         this.io.emit('desconectar', socket.id);
       });
       // New Player.
-      socket.on('newPlayer', (token) => {
+      // socket.on('newPlayer', (token) => {
+      socket.on('newPlayer', () => {
         try {
           // validate token, if valid send game information, else reject login.
           // const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
           // get player's name
-          //const { name } = decoded.user;
+          // const { name } = decoded.user;
           const name = 'test';
           // create a new Player
+          console.log(`Player in Server: ${socket.id}`);
           this.spawnPlayer(socket.id, name);
 
           // send the players objecto to the new player
@@ -90,20 +92,6 @@ export default class GameManager {
           console.log(error);
           socket.emit('invalidToken');
         }
-        // create a new Player
-        this.spawnPlayer(socket.id);
-
-        // send the players objecto to the new player
-        socket.emit('currentPlayers', this.players);
-
-        // send the monsters objecto to the new player
-        socket.emit('currentMonsters', this.monsters);
-
-        // send the chests objecto to the new player
-        socket.emit('currentChests', this.chests);
-
-        // inform the other players of the new player that joined.
-        socket.broadcast.emit('spawnPlayer', this.players[socket.id]);
       });
       // Players move.
       socket.on('playerMovement', (playerData) => {

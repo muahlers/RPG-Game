@@ -10,3 +10,5 @@ Cuando un jugador mata a otro jugador su medidor de vida baja casi a cero, luego
 actualiza matando a otro enemigo.
 
 Cuando un jugador se desconecta, no desparece!
+
+Cookies y Credenciales de Token Caidos completamente
