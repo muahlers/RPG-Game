@@ -233,35 +233,37 @@ export default class GameManager {
 
   // Funciones para Spawner.
   addChest(chestId, chest) {
-    console.log('chestSpawned', chestId);
+    console.log('chestbSpawned: ', chestId);
     this.chests[chestId] = chest;
     this.io.emit('chestSpawned', chest);
   }
 
   deleteChest(chestId) {
-    console.log('chestRemoved', chestId);
+    console.log('chest Removed: ', chestId);
     delete this.chests[chestId];
     this.io.emit('chestRemoved', chestId);
   }
 
   addMonster(monsterId, monster) {
-    console.log('monsterSpawned', monsterId);
+    console.log('monster Spawned:', monsterId);
     this.monsters[monsterId] = monster;
     this.io.emit('monsterSpawned', monster);
   }
 
   deleteMonster(monsterId) {
-    console.log('monsterRemoved', monsterId);
+    console.log('monster Removed :', monsterId);
     delete this.monsters[monsterId];
     this.io.emit('monsterRemoved', monsterId);
   }
 
   moveMonsters() {
+    console.log('Monsters Move');
     this.io.emit('monsterMovement', this.monsters);
   }
 
   spawnPlayer(playerId, name) {
     const player = new PlayerModel(this.playerLocations, playerId, this.players, name);
     this.players[playerId] = player;
+    console.log(`New Spawned: ${playerId}`);
   }
 }

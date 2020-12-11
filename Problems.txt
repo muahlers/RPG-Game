@@ -11,3 +11,5 @@ Cuando un jugador mata a otro jugador su medidor de vida baja casi a cero, luego
 actualiza matando a otro enemigo.
 
 Un viejo jugador solo aparece en la pantalla del nuevo jugador cuando se mueve.
+
+Dos instancias tienen monstruos distintos.
