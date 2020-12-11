@@ -41,12 +41,14 @@ export default class GameScene extends Phaser.Scene {
     });
     // spawn monsters game objects from server to new client.
     this.socket.on('currentMonsters', (monsters) => {
+      console.log('Current Monsters:');
       Object.keys(monsters).forEach((id) => {
         this.spawnMonster(monsters[id]);
       });
     });
     // spawn chests game objects from server to new client.
     this.socket.on('currentChests', (chests) => {
+      console.log('Current Chests:');
       Object.keys(chests).forEach((id) => {
         this.spawnChest(chests[id]);
       });

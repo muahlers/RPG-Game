@@ -77,16 +77,16 @@ export default class GameManager {
           // create a new Player
           console.log(`Player in Server: ${socket.id} frame: ${frame}`);
           this.spawnPlayer(socket.id, name, frame);
-
+          console.log('Emitinig Current Players');
           // send the players objecto to the new player
           socket.emit('currentPlayers', this.players);
-
+          console.log('Emitinig Current Monsters');
           // send the monsters objecto to the new player
           socket.emit('currentMonsters', this.monsters);
-
+          console.log('Emitinig Current Chests');
           // send the chests objecto to the new player
           socket.emit('currentChests', this.chests);
-
+          console.log('Emitinig Broadcasting to others players');
           // inform the other players of the new player that joined.
           socket.broadcast.emit('spawnPlayer', this.players[socket.id], frame);
         } catch (error) {
@@ -266,5 +266,6 @@ export default class GameManager {
     const player = new PlayerModel(playerId, this.playerLocations, this.players, name, frame);
     this.players[playerId] = player;
     console.log(`New Player Spawned: ${playerId}`);
+    console.log(player);
   }
 }
