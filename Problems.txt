@@ -2,13 +2,12 @@ El build que construi en Localhost no logra comunicarse con el servidor. Cors?
 
 No puedo mandar emails por Gmail
 
+Cookie:
 Si hay mas cookies me falla la función para atrapar cookies [getCookie]
+Cookies y Credenciales de Token Caidos completamente
 
-Cuando un segundo jugador entra se spawnean 2 jugadores en vez de 1.
-
+Juego:
 Cuando un jugador mata a otro jugador su medidor de vida baja casi a cero, luego se recupera cuando se
 actualiza matando a otro enemigo.
 
-Cuando un jugador se desconecta, no desparece!
-
-Cookies y Credenciales de Token Caidos completamente
+Un viejo jugador solo aparece en la pantalla del nuevo jugador cuando se mueve.

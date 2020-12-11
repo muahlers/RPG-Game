@@ -173,7 +173,7 @@ export default class GameManager {
           // check iff enemy payer is dead, if it's give half gold to other player.
           if (this.players[enemyPlayerId].health < 1) {
             // give player half gold
-            this.players[socket.id].updateGold(gold);
+            this.players[socket.id].updateGold(gold / 2);
             this.io.emit('updateScore', this.players[socket.id].gold);
 
             // respawn enemy player.
@@ -181,7 +181,7 @@ export default class GameManager {
             this.io.emit('respawnPlayer', this.players[enemyPlayerId]);
 
             // reset the attacked player gold
-            this.players[enemyPlayerId].updateGold(-gold);
+            this.players[enemyPlayerId].updateGold(-gold / 2);
             this.io.to(`${enemyPlayerId}`).emit('updateScore', this.players[enemyPlayerId].gold);
           } else {
             this.io.emit('updatePlayerHealth', enemyPlayerId, this.players[enemyPlayerId].health);

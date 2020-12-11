@@ -21,6 +21,7 @@ export default class GameScene extends Phaser.Scene {
   }
 
   listenForSocketEvents() { // Connection with server logic.
+    // NUEVO JUGADOR:
     // spawn main players game objects from server to new client.
     this.socket.on('currentPlayers', (players) => {
       console.log('Current Players:');
@@ -54,28 +55,10 @@ export default class GameScene extends Phaser.Scene {
       this.createPlayer(player, false);
       console.log(player);
     });
-    // inform a player has moved.
-    this.socket.on('playerMoved', (player) => {
-      this.otherPlayers.getChildren().forEach((otherPlayer) => {
-        if (player.id === otherPlayer.id) {
-          otherPlayer.setPosition(player.x, player.y);
-          otherPlayer.updateHealthBar();
-          otherPlayer.updateFliX(player.flipX);
-          otherPlayer.playerAttacking = player.playerAttacking;
-          otherPlayer.currentDirection = player.currentDirection;
-          if (player.playerAttacking) {
-            otherPlayer.attack();
-          }
-        }
-      });
-    });
+    // Chests:
     // inform that a chest has been spawned.
     this.socket.on('chestSpawned', (chest) => {
       this.spawnChest(chest);
-    });
-    // inform that a monster has been spawned.
-    this.socket.on('monsterSpawned', (monster) => {
-      this.spawnMonster(monster);
     });
     // inform that a chest has been removed.
     this.socket.on('chestRemoved', (chestId) => {
@@ -84,6 +67,11 @@ export default class GameScene extends Phaser.Scene {
           chest.makeInactive();
         }
       });
+    });
+    // Monsters:
+    // inform that a monster has been spawned.
+    this.socket.on('monsterSpawned', (monster) => {
+      this.spawnMonster(monster);
     });
     // inform that a monster has been removed.
     this.socket.on('monsterRemoved', (monsterId) => {
@@ -104,9 +92,33 @@ export default class GameScene extends Phaser.Scene {
         });
       });
     });
+    // inform that a monster health has changed.
+    this.socket.on('updateMonsterHealth', (monsterId, health) => {
+      this.monsters.getChildren().forEach((monster) => {
+        if (monster.id === monsterId) {
+          monster.updateHealth(health);
+        }
+      });
+    });
+    // Players:
     // inform that player score has changed.
     this.socket.on('updateScore', (gold) => {
       this.events.emit('updateScore', gold);
+    });
+    // inform a player has moved.
+    this.socket.on('playerMoved', (player) => {
+      this.otherPlayers.getChildren().forEach((otherPlayer) => {
+        if (player.id === otherPlayer.id) {
+          otherPlayer.setPosition(player.x, player.y);
+          otherPlayer.updateHealthBar();
+          otherPlayer.updateFliX(player.flipX);
+          otherPlayer.playerAttacking = player.playerAttacking;
+          otherPlayer.currentDirection = player.currentDirection;
+          if (player.playerAttacking) {
+            otherPlayer.attack();
+          }
+        }
+      });
     });
     // inform that player health has changed.
     this.socket.on('updatePlayerHealth', (playerId, health) => {
@@ -122,14 +134,6 @@ export default class GameScene extends Phaser.Scene {
           }
         });
       }
-    });
-    // inform that a monster health has changed.
-    this.socket.on('updateMonsterHealth', (monsterId, health) => {
-      this.monsters.getChildren().forEach((monster) => {
-        if (monster.id === monsterId) {
-          monster.updateHealth(health);
-        }
-      });
     });
     // inform that player has to be respwned.
     this.socket.on('respawnPlayer', (objPlayer) => {
@@ -153,6 +157,7 @@ export default class GameScene extends Phaser.Scene {
       });
     });
     // inform that the token as expire.
+    // Security:
     this.socket.on('invalidToken', () => {
       // window.alert('Token is not longer valid,please login again.');
       // window.location.reload();
