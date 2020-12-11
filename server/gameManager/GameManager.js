@@ -158,6 +158,7 @@ export default class GameManager {
               // respawn the player
               this.players[socket.id].respawn(this.players);
               this.io.emit('respawnPlayer', this.players[socket.id]);
+              console.log('Respawn Death Player:');
             }
           }
         }
@@ -264,6 +265,6 @@ export default class GameManager {
   spawnPlayer(playerId, name) {
     const player = new PlayerModel(this.playerLocations, playerId, this.players, name);
     this.players[playerId] = player;
-    console.log(`New Spawned: ${playerId}`);
+    console.log(`New Player Spawned: ${playerId}`);
   }
 }

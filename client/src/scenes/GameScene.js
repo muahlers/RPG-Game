@@ -16,7 +16,6 @@ export default class GameScene extends Phaser.Scene {
     // get a reference to our socket.
     this.socket = this.sys.game.globals.socket;
     // Listen for socket events.
-    console.log('In Game Scene');
     this.listenForSocketEvents();
   }
 
@@ -174,6 +173,11 @@ export default class GameScene extends Phaser.Scene {
     // console.log(`from Cookie: ${getCookie('jwt')}`);
     // this.socket.emit('newPlayer', getCookie('jwt'));
     this.socket.emit('newPlayer');
+
+    // handles game resize.
+    this.scale.on('resize', this.resize, this);
+    // fix a bug.
+    this.resize({ height: this.scale.height, width: this.scale.width });
   }
 
   update() {
@@ -240,6 +244,7 @@ export default class GameScene extends Phaser.Scene {
       playerObject.id,
       this.playerAttackAudio,
       mainPlayer,
+      playerObject.playerName,
     );
 
     if (!mainPlayer) {
@@ -336,5 +341,11 @@ export default class GameScene extends Phaser.Scene {
     // play gold pickup sound
     this.goldPickupAudio.play();
     this.socket.emit('pickUpChest', chest.id);
+  }
+
+  resize(gameSize) {
+    // Remember to Cut resize Listener if we change Secene.
+    const { width, height } = gameSize;
+    this.cameras.resize(width, height);
   }
 }

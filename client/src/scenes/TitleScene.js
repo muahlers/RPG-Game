@@ -8,7 +8,7 @@ export default class TitleScene extends Phaser.Scene {
 
   create() {
     // create title text
-    this.titleText = this.add.text(this.scale.width / 2, this.scale.height / 2, 'Zenva MMORPG', { fontSize: '128px', fill: '#fff' });
+    this.titleText = this.add.text(this.scale.width / 2, this.scale.height / 4, 'Zenva MMORPG', { fontSize: '128px', fill: '#fff' });
     this.titleText.setOrigin(0.5);
 
     // create the Login game button
@@ -42,7 +42,6 @@ export default class TitleScene extends Phaser.Scene {
 
   resize(gameSize) {
     const { width, height } = gameSize;
-    console.log('Resize: Title Scene');
     this.cameras.resize(width, height);
 
     if (width < 1000) {
@@ -52,12 +51,12 @@ export default class TitleScene extends Phaser.Scene {
     }
     if (height < 700) {
       this.titleText.setPosition(width / 2, height * 0.40);
-      this.loginButton.setPosition(width / 2, height * 0.55);
-      this.signupButton.setPosition(width / 2, height * 0.70);
+      this.loginButton.setPosition(width / 2, height * 0.65);
+      this.signupButton.setPosition(width / 2, height * 0.80);
       this.loginButton.setScale(0.7);
       this.signupButton.setScale(0.7);
     } else {
-      this.titleText.setPosition(width / 2, height / 2);
+      this.titleText.setPosition(width / 2, height / 4);
       this.loginButton.setPosition(width / 2, height * 0.65);
       this.signupButton.setPosition(width / 2, height * 0.75);
       this.loginButton.setScale(1);
