@@ -58,6 +58,7 @@ app.use(bodyParser.json()); // parse application/json
 app.use(cookieParser());
 
 // Allow requests from other servers.
+app.options('*', cors());
 app.use(cors());
 /* app.use(cors(
   {
