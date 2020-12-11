@@ -11,12 +11,15 @@ export default class GameScene extends Phaser.Scene {
   }
 
   init() {
+    console.log('Inside Game Scene: init()');
     // Launch UI in parallel.
     this.scene.launch('Ui');
     // get a reference to our socket.
     this.socket = this.sys.game.globals.socket;
     // Listen for socket events.
     this.listenForSocketEvents();
+    console.log(this.scene.settings);
+    this.selectedCharacter = this.scene.settings.data.selectedCharacter || 0;
   }
 
   listenForSocketEvents() { // Connection with server logic.
@@ -164,6 +167,7 @@ export default class GameScene extends Phaser.Scene {
   }
 
   create() {
+    console.log('Inside Game Scene: create()');
     this.createMap();
     this.createAudio();
     this.createGroups();
@@ -172,12 +176,13 @@ export default class GameScene extends Phaser.Scene {
     // emit event to server that a new player joined.
     // console.log(`from Cookie: ${getCookie('jwt')}`);
     // this.socket.emit('newPlayer', getCookie('jwt'));
-    this.socket.emit('newPlayer');
+    this.socket.emit('newPlayer', this.selectedCharacter);
 
     // handles game resize.
     this.scale.on('resize', this.resize, this);
     // fix a bug.
     this.resize({ height: this.scale.height, width: this.scale.width });
+    console.log('Outside Game Scene: create()');
   }
 
   update() {

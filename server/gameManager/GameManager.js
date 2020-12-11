@@ -64,8 +64,8 @@ export default class GameManager {
         this.io.emit('desconectar', socket.id);
       });
       // New Player.
-      // socket.on('newPlayer', (token) => {
-      socket.on('newPlayer', () => {
+      // socket.on('newPlayer', (token, frame) => {
+      socket.on('newPlayer', (frame) => {
         try {
           console.log('Sending Info to new Player: Players, Chests, Monsters');
           // validate token, if valid send game information, else reject login.
@@ -75,8 +75,8 @@ export default class GameManager {
           // const { name } = decoded.user;
           const name = 'test';
           // create a new Player
-          console.log(`Player in Server: ${socket.id}`);
-          this.spawnPlayer(socket.id, name);
+          console.log(`Player in Server: ${socket.id} frame: ${frame}`);
+          this.spawnPlayer(socket.id, name, frame);
 
           // send the players objecto to the new player
           socket.emit('currentPlayers', this.players);
@@ -88,7 +88,7 @@ export default class GameManager {
           socket.emit('currentChests', this.chests);
 
           // inform the other players of the new player that joined.
-          socket.broadcast.emit('spawnPlayer', this.players[socket.id]);
+          socket.broadcast.emit('spawnPlayer', this.players[socket.id], frame);
         } catch (error) {
           console.log(error);
           socket.emit('invalidToken');
@@ -262,8 +262,8 @@ export default class GameManager {
     this.io.emit('monsterMovement', this.monsters);
   }
 
-  spawnPlayer(playerId, name) {
-    const player = new PlayerModel(this.playerLocations, playerId, this.players, name);
+  spawnPlayer(playerId, name, frame) {
+    const player = new PlayerModel(playerId, this.playerLocations, this.players, name, frame);
     this.players[playerId] = player;
     console.log(`New Player Spawned: ${playerId}`);
   }

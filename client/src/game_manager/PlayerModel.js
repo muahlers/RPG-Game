@@ -1,12 +1,12 @@
-import { v4 as uuidv4 } from 'uuid';
-
 export default class PlayerModel {
-  constructor(spawnLocations) {
+  constructor(playerId, spawnLocations, players, name, frame) {
     this.health = 10;
     this.maxHealth = 10;
     this.gold = 0;
-    this.id = `player-${uuidv4()}`;
+    this.id = playerId;
     this.spawnLocations = spawnLocations;
+    this.playerName = name;
+    this.frame = frame;
 
     const location = this.spawnLocations[Math.floor(Math.random() * this.spawnLocations.length)];
     [this.x, this.y] = location;

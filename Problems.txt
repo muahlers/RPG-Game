@@ -13,3 +13,5 @@ actualiza matando a otro enemigo.
 Un viejo jugador solo aparece en la pantalla del nuevo jugador cuando se mueve.
 
 Dos instancias tienen monstruos distintos.
+
+Monstruos no tiene limites y salen del juego pero quedan activos.
