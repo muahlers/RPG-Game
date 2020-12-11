@@ -264,6 +264,8 @@ export default class GameManager {
 
   spawnPlayer(playerId, name, frame) {
     const player = new PlayerModel(playerId, this.playerLocations, this.players, name, frame);
+    console.log(playerId);
+    console.log(this.playerLocations);
     this.players[playerId] = player;
     console.log(`New Player Spawned: ${playerId}`);
     console.log(player);
