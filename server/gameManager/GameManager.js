@@ -67,6 +67,7 @@ export default class GameManager {
       // socket.on('newPlayer', (token) => {
       socket.on('newPlayer', () => {
         try {
+          console.log('Sending Info to new Player: Players, Chests, Monsters');
           // validate token, if valid send game information, else reject login.
           // const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
@@ -257,7 +258,6 @@ export default class GameManager {
   }
 
   moveMonsters() {
-    console.log('Monsters Move');
     this.io.emit('monsterMovement', this.monsters);
   }
 
