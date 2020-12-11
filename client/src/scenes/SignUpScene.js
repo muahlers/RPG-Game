@@ -35,6 +35,7 @@ export default class SignUpScene extends CredentialBaseScene {
         .then((response) => {
           if (response.status === '200') {
             console.log(response.message);
+            window.alert('Cuenta Creada Exitosamente');
             this.startScene('Login');
           } else {
             console.log(response.status);

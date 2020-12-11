@@ -4,6 +4,7 @@ import PlayerContainer from '../classes/player/PlayerContainer';
 import Chest from '../classes/Chest';
 import Monster from '../classes/Monster';
 // import { getCookie } from '../utils/utils';
+import DialogWindow from '../classes/DialogWindow';
 
 export default class GameScene extends Phaser.Scene {
   constructor() {
@@ -34,6 +35,7 @@ export default class GameScene extends Phaser.Scene {
         if (players[id].id === this.socket.id) {
           this.createPlayer(players[id], true);
           this.addCollisions();
+          console.log(players[id]);
         } else {
           this.createPlayer(players[id], false);
         }
@@ -175,6 +177,12 @@ export default class GameScene extends Phaser.Scene {
     this.createGroups();
     this.createInput();
 
+    // create Dialog.
+    console.log('create Chat');
+    /* this.dialogWindow = new DialogWindow(this, {
+      x: this.scale.width,
+    }); */
+
     // emit event to server that a new player joined.
     // console.log(`from Cookie: ${getCookie('jwt')}`);
     // this.socket.emit('newPlayer', getCookie('jwt'));
@@ -188,6 +196,9 @@ export default class GameScene extends Phaser.Scene {
   }
 
   update() {
+    // Update Dialog Window
+    // this.dialogWindow.update();
+
     if (this.player) this.player.update(this.cursors);
 
     if (this.player) {
@@ -245,7 +256,7 @@ export default class GameScene extends Phaser.Scene {
       playerObject.x * 2,
       playerObject.y * 2,
       'characters',
-      0,
+      playerObject.frame,
       playerObject.health,
       playerObject.maxHealth,
       playerObject.id,
