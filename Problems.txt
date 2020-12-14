@@ -15,3 +15,11 @@ Un viejo jugador solo aparece en la pantalla del nuevo jugador cuando se mueve.
 Dos instancias tienen monstruos distintos.
 
 Monstruos no tiene limites y salen del juego pero quedan activos.
+
+Base de dato:
+problema con email como unique en chat Game manager => newMessage
+
+
+Ideas:
+
+explorar rooms in sockets para Chat

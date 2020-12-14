@@ -162,8 +162,12 @@ export default class GameScene extends Phaser.Scene {
         }
       });
     });
-    // inform that the token as expire.
+    // Chat:
+    this.socket.on('newMessage', (messageObject) => {
+      this.dialogWindow.addNewMessage(messageObject);
+    });
     // Security:
+    // inform that the token as expire.
     this.socket.on('invalidToken', () => {
       // window.alert('Token is not longer valid,please login again.');
       // window.location.reload();
@@ -179,9 +183,9 @@ export default class GameScene extends Phaser.Scene {
 
     // create Dialog.
     console.log('create Chat');
-    /* this.dialogWindow = new DialogWindow(this, {
+    this.dialogWindow = new DialogWindow(this, {
       x: this.scale.width,
-    }); */
+    });
 
     // emit event to server that a new player joined.
     // console.log(`from Cookie: ${getCookie('jwt')}`);
@@ -192,12 +196,47 @@ export default class GameScene extends Phaser.Scene {
     this.scale.on('resize', this.resize, this);
     // fix a bug.
     this.resize({ height: this.scale.height, width: this.scale.width });
+    // add key down Event Listener.
+    this.keyDownListener();
+    // remove focus from chat input field.
+    this.input.on('pointerdown', () => {
+      document.getElementById('chatInput').blur();
+    });
+
     console.log('Outside Game Scene: create()');
+  }
+
+  keyDownListener() {
+    this.inputMessageField = document.getElementById('chatInput');
+    console.log('Key Listener');
+    console.log(this.inputMessageField);
+    window.addEventListener('keydown', (event) => {
+      // enter was pressed
+      if (event.which === 13) {
+        this.sendMessage();
+      } else if (event.which === 32) {
+        // space key was press.
+        if (document.activeElement === this.inputMessageField) {
+          this.inputMessageField.value = `${this.inputMessageField.value} `;
+        }
+      }
+    });
+  }
+
+  sendMessage() {
+    if (this.inputMessageField) {
+      const message = this.inputMessageField.value;
+      if (message) {
+        this.inputMessageField.value = '';
+        // this.socket.emit('sendMessage', message, getCookie('jwt'));
+        this.socket.emit('sendMessage', message);
+      }
+    }
   }
 
   update() {
     // Update Dialog Window
-    // this.dialogWindow.update();
+    this.dialogWindow.update();
 
     if (this.player) this.player.update(this.cursors);
 
@@ -365,5 +404,6 @@ export default class GameScene extends Phaser.Scene {
     // Remember to Cut resize Listener if we change Secene.
     const { width, height } = gameSize;
     this.cameras.resize(width, height);
+    this.dialogWindow.resize(gameSize);
   }
 }

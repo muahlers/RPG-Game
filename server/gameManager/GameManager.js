@@ -3,6 +3,7 @@ import PlayerModel from './PlayerModel';
 import Spawner from './Spawner';
 import * as levelData from '../public/assets/level/large_level.json';
 import { SpawnerType } from './utils';
+import ChatModel from '../models/chatModel';
 
 export default class GameManager {
   constructor(io) {
@@ -188,6 +189,32 @@ export default class GameManager {
           } else {
             this.io.emit('updatePlayerHealth', enemyPlayerId, this.players[enemyPlayerId].health);
           }
+        }
+      });
+
+      // socket.on('sendMessage', (message, token) => {
+      socket.on('sendMessage', async (message) => {
+        try {
+          // validate token, if valid send game information, else reject login.
+          // const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+          // get player's name
+          // const { name, email } = decoded.user;
+          const name = 'test';
+          const email = 'test@test.com';
+
+          // store data in data base
+          // await ChatModel.create({ email, message });
+
+          // emit message to all players
+          this.io.emit('newMessage', {
+            message,
+            name,
+            frame: this.players[socket.id].frame,
+          });
+        } catch (error) {
+          console.log(error);
+          socket.emit('invalidToken');
         }
       });
       // player connected to our game.

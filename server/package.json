@@ -23,11 +23,11 @@
   },
   "homepage": "https://github.com/muahlers/NodeServer-Express#readme",
   "devDependencies": {
-    "@babel/core": "^7.12.9",
-    "@babel/node": "^7.12.3",
-    "@babel/preset-env": "^7.12.7",
+    "@babel/core": "^7.12.10",
+    "@babel/node": "^7.12.10",
+    "@babel/preset-env": "^7.12.10",
     "babel-loader": "^8.2.2",
-    "eslint": "^7.14.0",
+    "eslint": "^7.15.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.22.1"
   },
@@ -39,13 +39,13 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.11.0",
-    "nodemailer": "^6.4.16",
+    "mongoose": "^5.11.7",
+    "nodemailer": "^6.4.17",
     "nodemailer-express-handlebars": "^4.0.0",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
-    "socket.io": "^3.0.3",
-    "uuid": "^8.3.1"
+    "socket.io": "^3.0.4",
+    "uuid": "^8.3.2"
   }
 }

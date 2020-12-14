@@ -8,6 +8,7 @@ const ChatSchema = new Schema({
   email: {
     type: String,
     required: true,
+    unique: false,
   },
   message: {
     type: String,
