@@ -10,3 +10,5 @@ https://nodemailer.com/smtp/oauth2/
 * Muchas Páginas me salen Unauthorize!
 
 * Problemas con Cookies en Login
+
+* Deploy
