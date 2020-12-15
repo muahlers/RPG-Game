@@ -14,7 +14,7 @@ export function postData(url, data = {}) {
     method: 'POST',
     mode: 'cors',
     cache: 'no-cache',
-    credentials: 'same-origin', // 'include', // needed for cookies
+    credentials: 'same-origin', // needed for cookies, 'include',
     headers: {
       'Content-Type': 'application/json',
     },
@@ -76,5 +76,5 @@ export function refreshTokenInterval() {
         // window.alert('Token is not longer valid, please login again.');
         // window.location.replace('/index.html');
       });
-  });
+  }, parseInt(TOKEN_INTERVAL, 10));
 }

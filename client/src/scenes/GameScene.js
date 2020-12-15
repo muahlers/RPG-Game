@@ -3,6 +3,7 @@ import GameMap from '../classes/GameMap';
 import PlayerContainer from '../classes/player/PlayerContainer';
 import Chest from '../classes/Chest';
 import Monster from '../classes/Monster';
+import Item from '../classes/Item';
 // import { getCookie } from '../utils/utils';
 import DialogWindow from '../classes/DialogWindow';
 
@@ -55,6 +56,13 @@ export default class GameScene extends Phaser.Scene {
         this.spawnChest(chests[id]);
       });
     });
+    // spawn items game objects from server to new client.
+    this.socket.on('currentItems', (items) => {
+      console.log('Current Items:');
+      Object.keys(items).forEach((id) => {
+        this.spawnItem(items[id]);
+      });
+    });
     // spawn new players game objects from server to other clients.
     this.socket.on('spawnPlayer', (player) => {
       console.log('Spwan New Player to all Servers:');
@@ -73,6 +81,15 @@ export default class GameScene extends Phaser.Scene {
           chest.makeInactive();
         }
       });
+    });
+    // Items:
+    // inform a item has been spawned.
+    this.socket.on('itemSpawned', (item) => {
+      console.log(item);
+    });
+    // inform a item has been removed.
+    this.socket.on('itemRemoved', (itemId) => {
+      console.log(itemId);
     });
     // Monsters:
     // inform that a monster has been spawned.
@@ -275,8 +292,10 @@ export default class GameScene extends Phaser.Scene {
   }
 
   createGroups() {
-    // create a chest group
+    // create a chest group.
     this.chests = this.physics.add.group();
+    // create a item group.
+    this.items = this.physics.add.group();
     // create a monster group
     this.monsters = this.physics.add.group();
     this.monsters.runChildUpdate = true;
@@ -322,6 +341,8 @@ export default class GameScene extends Phaser.Scene {
     this.physics.add.collider(this.player, this.gameMap.blockedLayer);
     // check for overlaps between player and chest game objects
     this.physics.add.overlap(this.player, this.chests, this.collectChest, null, this);
+    // check for overlaps between player and items game objects
+    this.physics.add.overlap(this.player, this.items, this.collectItem, null, this);
     // check for collisions between the monster group and the tiled blocked layer
     this.physics.add.collider(this.monsters, this.gameMap.blockedLayer);
     // check for overlaps between the player's weapon and monster game objects
@@ -398,6 +419,11 @@ export default class GameScene extends Phaser.Scene {
     // play gold pickup sound
     this.goldPickupAudio.play();
     this.socket.emit('pickUpChest', chest.id);
+  }
+
+  collectItem(player, item) {
+    this.goldPickupAudio.play();
+    this.socket.emit('pickUpItem', item.id);
   }
 
   resize(gameSize) {

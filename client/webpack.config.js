@@ -4,7 +4,7 @@ const webpack = require('webpack');
 
 module.exports = {
   entry: ['./src/index.js'],
-  output:{
+  output: {
     path: path.resolve(__dirname, 'build'),
     publicPath: '/build/',
     'filename': 'bundle.js'
@@ -13,24 +13,25 @@ module.exports = {
     contentBase: './build/',
     watchContentBase: true
   },
-  module:{
+  module: {
     rules: [
       {
-      test:[/\.vert$/, /\.frag$/],
-      use: 'raw-loader'
-    },
+        test: [/\.vert$/, /\.frag$/],
+        use: 'raw-loader'
+      },
       {
-      test: /\.js$/,
-      use: { loader: 'babel-loader'},
-      exclude: /node_modules/,
-    }
-  ]
+        test: /\.js$/,
+        use: { loader: 'babel-loader' },
+        exclude: /node_modules/,
+      }
+    ]
   },
   plugins: [
     new webpack.DefinePlugin({
       'CANVAS_RENDER': JSON.stringify(true),
       'WEBGL_RENDER': JSON.stringify(true),
-      'SERVER_URL': JSON.stringify(process.env.SERVER_URL)
+      'SERVER_URL': JSON.stringify(process.env.SERVER_URL),
+      'TOKEN_INTERVAL': JSON.stringify(process.env.TOKEN_INTERVAL),
     })
   ]
 }

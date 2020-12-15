@@ -7,7 +7,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
     "nodemon": "npx nodemon index.js --exec babel-node",
-    "lint": "npx eslint ./ --fix"
+    "lint": "npx eslint ./ --fix",
+    "clean": "rm -rf build && mkdir build",
+    "build": "babel -d ./build ./src -s",
+    "start": "npm run clean && npm run build && node ./build/index.js"
   },
   "repository": {
     "type": "git",
@@ -23,13 +26,19 @@
   },
   "homepage": "https://github.com/muahlers/NodeServer-Express#readme",
   "devDependencies": {
+    "@babel/cli": "^7.12.10",
     "@babel/core": "^7.12.10",
     "@babel/node": "^7.12.10",
+    "@babel/plugin-transform-runtime": "^7.12.10",
     "@babel/preset-env": "^7.12.10",
+    "@babel/runtime": "^7.12.5",
     "babel-loader": "^8.2.2",
     "eslint": "^7.15.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.22.1"
+  },
+  "engines": {
+    "node": "12.19"
   },
   "dependencies": {
     "bcrypt": "^5.0.0",

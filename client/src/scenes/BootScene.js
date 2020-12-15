@@ -27,6 +27,7 @@ export default class BootScene extends Phaser.Scene {
     this.load.spritesheet('items', 'assets/images/items.png', { frameWidth: 32, frameHeight: 32 });
     this.load.spritesheet('characters', 'assets/images/characters.png', { frameWidth: 32, frameHeight: 32 });
     this.load.spritesheet('monsters', 'assets/images/monsters.png', { frameWidth: 32, frameHeight: 32 });
+    this.load.spritesheet('tools', 'assets/images/tools.png', { frameWidth: 32, frameHeight: 32 });
   }
 
   loadAudio() {
@@ -43,6 +44,7 @@ export default class BootScene extends Phaser.Scene {
   }
 
   create() {
+    console.log('Going to Game Scene');
     this.scene.start('Game');
   }
 }
