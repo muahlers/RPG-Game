@@ -134,10 +134,10 @@ export default class GameManager {
             // Refresh Player Object in Game Scene.
             socket.emit('updateItems', this.players[socket.id]);
             // Refresh Player Object in others Players Game Scene.
-            socket.broadcast('updatePlayersItems', socket.id, this.players[socket.id]);
+            socket.broadcast.emit('updatePlayersItems', socket.id, this.players[socket.id]);
 
             // removing the item from GameManeger
-            this.spawners[this.item[itemId].spawnerId].removeObject(itemId);
+            this.spawners[this.items[itemId].spawnerId].removeObject(itemId);
           }
         }
       });
@@ -251,7 +251,7 @@ export default class GameManager {
 
   setupSpawners() {
     const config = {
-      spawnInterval: 3000,
+      spawnInterval: 6000,
       limit: 3,
       spawnerType: SpawnerType.CHEST,
       id: '',
@@ -288,6 +288,7 @@ export default class GameManager {
     // create item spawners
     config.id = 'item-1';
     config.spawnerType = SpawnerType.ITEM;
+    config.limit = 1;
 
     spawner = new Spawner(
       config,
@@ -313,6 +314,7 @@ export default class GameManager {
 
   addItem(itemId, item) {
     console.log('item Spawned: ', itemId);
+    console.log('item Spawned: ', item);
     this.items[itemId] = item;
     this.io.emit('itemSpawned', item);
   }

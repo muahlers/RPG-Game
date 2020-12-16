@@ -85,11 +85,17 @@ export default class GameScene extends Phaser.Scene {
     // Items:
     // inform a item has been spawned.
     this.socket.on('itemSpawned', (item) => {
-      console.log(item);
+      console.log(`item Spawned I${item.id}`);
+      this.spawnItem(item);
+      console.log('item Spawned II');
     });
     // inform a item has been removed.
     this.socket.on('itemRemoved', (itemId) => {
-      console.log(itemId);
+      this.items.getChildren().forEach((item) => {
+        if (item.id === itemId) {
+          item.makeInactive();
+        }
+      });
     });
     // Monsters:
     // inform that a monster has been spawned.
@@ -127,6 +133,26 @@ export default class GameScene extends Phaser.Scene {
     // inform that player score has changed.
     this.socket.on('updateScore', (gold) => {
       this.events.emit('updateScore', gold);
+    });
+    // inform that player has pick up an item.
+    this.socket.on('updateItems', (playerObject) => {
+      this.player.items = playerObject.playerItems;
+      this.player.maxHealth = playerObject.maxHealth;
+      this.player.attackValue = playerObject.attack;
+      this.player.defenseValue = playerObject.defense;
+      this.player.updateHealthBar();
+    });
+    // inform that other player has pick up an item.
+    this.socket.on('updatePlayersItems', (playerId, playerObject) => {
+      this.otherPlayers.getChildren().forEach((otherPlayer) => {
+        if (playerId === otherPlayer.id) {
+          otherPlayer.items = playerObject.playerItems;
+          otherPlayer.maxHealth = playerObject.maxHealth;
+          otherPlayer.attackValue = playerObject.attack;
+          otherPlayer.defenseValue = playerObject.defense;
+          otherPlayer.updateHealthBar();
+        }
+      });
     });
     // inform a player has moved.
     this.socket.on('playerMoved', (player) => {
@@ -321,6 +347,10 @@ export default class GameScene extends Phaser.Scene {
       this.playerAttackAudio,
       mainPlayer,
       playerObject.playerName,
+      playerObject.gold,
+      playerObject.defense,
+      playerObject.attack,
+      playerObject.playerItems,
     );
 
     if (!mainPlayer) {
@@ -368,6 +398,21 @@ export default class GameScene extends Phaser.Scene {
       chest.id = chestObject.id;
       chest.setPosition(chestObject.x * 2, chestObject.y * 2);
       chest.makeActive();
+    }
+  }
+
+  spawnItem(itemObject) {
+    let item = this.items.getFirstDead();
+    if (!item) {
+      item = new Item(this, itemObject.x * 2, itemObject.y * 2, 'tools', itemObject.frame, itemObject.id);
+      // add item to items group.
+      this.items.add(item);
+    } else {
+      item.id = itemObject.id;
+      item.frame = itemObject.frame;
+      item.setFrame(item.frame);
+      item.setPosition(itemObject.x * 2, itemObject.y * 2);
+      item.makeActive();
     }
   }
 
@@ -422,7 +467,6 @@ export default class GameScene extends Phaser.Scene {
   }
 
   collectItem(player, item) {
-    this.goldPickupAudio.play();
     this.socket.emit('pickUpItem', item.id);
   }
 

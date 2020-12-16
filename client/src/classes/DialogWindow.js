@@ -1,46 +1,19 @@
-import { createInputField } from '../utils/utils'
+import { createInputField } from '../utils/utils';
+import ModalWindow from './ModalWindow';
 
-export default class DialogWindow {
+export default class DialogWindow extends ModalWindow {
   constructor(scene, opts) {
-    if (!opts) opts = {};
-    const {
-      x = 0,
-      y = 0,
-      debug = false,
-    } = opts;
-
-    this.scene = scene;
-    this.x = x;
-    this.y = y;
-    this.debug = debug;
-
-    this.borderThickness = 3;
-    this.borderColor = 0x907748;
-    this.borderAlpha = 0.3;
-    this.windowAlpha = 0.4;
-    this.textAlpha = 0.2;
-    this.windowColor = 0x303030;
-    this.windowWidth = 305;
-    this.windowHeight = this.scene.scale.height;
-    this.worldOldX = this.scene.cameras.main.worldView.x;
-    this.worldOldY = this.scene.cameras.main.worldView.y;
+    super(scene, opts);
 
     this.messages = [];
     this.messageCount = 0;
     this.messagesHeight = 0;
     this.messageGroup = this.scene.add.group();
 
-    this.graphics = this.scene.add.graphics();
     this.graphics.setDepth(2); // Pone este ojeto en otro Layer.
     this.createInput();
     this.createWindow();
     this.makeInteractive();
-  }
-
-  createWindow() {
-    const windowDimension = this.calculateWindowDimension();
-    this.createOuterWindow(windowDimension);
-    this.createInnerWindow(windowDimension);
   }
 
   calculateWindowDimension() {
@@ -54,15 +27,7 @@ export default class DialogWindow {
     };
   }
 
-  createOuterWindow(data) {
-    this.graphics.lineStyle(this.borderThickness, this.borderColor, this.borderAlpha);
-    this.graphics.strokeRect(data.x, data.y, data.rectWidth, data.rectHeight);
-  }
-
-  createInnerWindow(data) {
-    this.graphics.fillStyle(this.windowColor, this.windowAlpha);
-    this.graphics.fillRect(data.x + 1, data.y + 1, data.rectWidth - 1, data.rectHeight - 1);
-
+  createInnerWindowRectangle(data) {
     if (this.rect) {
       this.rect.setPosition(data.x + 1, data.y + 1);
       this.rect.setDisplaySize(data.rectWidth - 1, data.rectHeight - 1);
@@ -85,22 +50,6 @@ export default class DialogWindow {
       this.dialogContainer.setDepth(3);
       this.dialogContainer.setAlpha(this.textAlpha);
     }
-  }
-
-  update() {
-    // update the dialg window if the main world view has chenged.
-    if (
-      this.scene.cameras.main.worldView.x !== this.worldOldX
-       || this.scene.cameras.main.worldView.y !== this.worldOldY) {
-      this.redrawWindow();
-      this.worldOldX = this.scene.cameras.main.worldView.x;
-      this.worldOldY = this.scene.cameras.main.worldView.y;
-    }
-  }
-
-  redrawWindow() {
-    this.graphics.clear();
-    this.createWindow();
   }
 
   makeInteractive() {

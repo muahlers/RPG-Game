@@ -16,8 +16,8 @@ export default class PlayerModel {
 
     const location = this.generateLocation(players);
     [this.x, this.y] = location;
-    this.x = 160;
-    this.y = 210;
+    this.x = 180;
+    this.y = 280;
   }
 
   canPickUpItem() {
