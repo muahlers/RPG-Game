@@ -68,13 +68,14 @@ export function getCookie(cname) { // Esta funcion no funciona
 export function refreshTokenInterval() {
   console.log('Inside refresInterval');
   console.log(`getCookie: ${getCookie('refreshJwt')}`);
+  const jwtToken = getCookie('refreshJwt');
   setInterval(() => {
-    postData(`${SERVER_URL}/token`, { refreshToken: getCookie('refreshJwt') })
+    postData(`${SERVER_URL}/token`, { refreshToken: jwtToken })
       .then(() => {})
       .catch((error) => {
         console.log(error.message);
-        // window.alert('Token is not longer valid, please login again.');
-        // window.location.replace('/index.html');
+        window.alert('Token is not longer valid, please login again.');
+        window.location.replace('/index.html');
       });
   }, parseInt(TOKEN_INTERVAL, 10));
 }
