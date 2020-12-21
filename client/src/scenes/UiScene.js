@@ -9,8 +9,7 @@ export default class UiScene extends Phaser.Scene {
   init() {
     // grab a reference to the game scene
     this.gameScene = this.scene.get('Game');
-    // TODO: set to false
-    this.showInventory = true;
+    this.showInventory = false;
   }
 
   create() {
@@ -67,6 +66,10 @@ export default class UiScene extends Phaser.Scene {
     // listen for the updateScore event from the game scene
     this.gameScene.events.on('updateScore', (score) => {
       this.scoreText.setText(`Coins: ${score}`);
+    });
+
+    this.gameScene.events.on('showInventory', (playerObject, mainPlayer) => {
+      this.toggleInventory(playerObject, mainPlayer);
     });
   }
 

@@ -23,3 +23,10 @@ Ideas:
 explorar rooms in sockets para Chat
 
 Guardar el objeto jugador en la base de datos
+
+
+Para Deploy in Heroku:
+
+cambiar .env en Client (UrlServer & BYPASS_AUTH)
+cambiar .env en Server (BYPASS_AUTH)
+Run bundle.sh en Client

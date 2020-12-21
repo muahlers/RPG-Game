@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 import jwt from 'jsonwebtoken';
 import PlayerModel from './PlayerModel';
 import Spawner from './Spawner';
@@ -68,16 +69,18 @@ export default class GameManager {
         this.io.emit('desconectar', socket.id);
       });
       // New Player.
-      // socket.on('newPlayer', (token, frame) => {
-      socket.on('newPlayer', (frame) => {
+      socket.on('newPlayer', (token, frame) => {
         try {
           console.log('Sending Info to new Player: Players, Chests, Monsters');
-          // validate token, if valid send game information, else reject login.
-          // const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-          // get player's name
-          // const { name } = decoded.user;
-          const name = 'test';
+          let name = uuidv4();
+
+          if (process.env.BYPASS_AUTH !== 'ENABLED') {
+            // validate token, if valid send game information, else reject login.
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            // get player's name
+            ({ name } = decoded.user);
+          }
           // create a new Player
           console.log(`Player in Server: ${socket.id} frame: ${frame}`);
           this.spawnPlayer(socket.id, name, frame);
@@ -121,6 +124,7 @@ export default class GameManager {
           // updating the players gold
           this.players[socket.id].updateGold(gold);
           socket.emit('updateScore', this.players[socket.id].gold);
+          socket.broadcast.emit('updatePlayersScore', socket.id, this.players[socket.id].gold);
 
           // removing the chest
           this.spawners[this.chests[chestId].spawnerId].removeObject(chestId);
@@ -144,6 +148,8 @@ export default class GameManager {
       // Player Drop a Item.
       socket.on('playerDroppedItem', (itemId) => {
         this.players[socket.id].removeItem(itemId);
+        // Refresh Player Object in Game Scene.
+        socket.emit('updateItems', this.players[socket.id]);
         socket.broadcast.emit('updatePlayersItems', socket.id, this.players[socket.id]);
       });
       // A monster has been attacked, refresh.
@@ -223,19 +229,21 @@ export default class GameManager {
         }
       });
 
-      // socket.on('sendMessage', (message, token) => {
-      socket.on('sendMessage', async (message) => {
+      socket.on('sendMessage', (message, token) => {
         try {
-          // validate token, if valid send game information, else reject login.
-          // const decoded = jwt.verify(token, process.env.JWT_SECRET);
+          let name = uuidv4();
+          let email = '';
+          if (process.env.BYPASS_AUTH !== 'ENABLED') {
+            // validate token, if valid send game information, else reject login.
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            // get player's name
+            ({ name, email } = decoded.user);
 
-          // get player's name
-          // const { name, email } = decoded.user;
-          const name = 'test';
-          const email = 'test@test.com';
-
-          // store data in data base
-          // await ChatModel.create({ email, message });
+            // store data in data base
+            async (email, message) => {
+              await ChatModel.create({ email, message });
+            }
+          }
 
           // emit message to all players
           this.io.emit('newMessage', {
@@ -293,7 +301,8 @@ export default class GameManager {
     // create item spawners
     config.id = 'item-1';
     config.spawnerType = SpawnerType.ITEM;
-    config.limit = 1;
+    config.limit = 3;
+    config.spawnInterval = 1000 * 60 * 5;
 
     spawner = new Spawner(
       config,
@@ -318,8 +327,7 @@ export default class GameManager {
   }
 
   addItem(itemId, item) {
-    console.log('item Spawned: ', itemId);
-    console.log('item Spawned: ', item);
+    console.log('item Added: ', itemId);
     this.items[itemId] = item;
     this.io.emit('itemSpawned', item);
   }

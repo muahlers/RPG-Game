@@ -9,7 +9,7 @@ export default class InventoryWindow extends ModalWindow {
     this.inventoryItems = {};
     this.graphics.setDepth(3);
     this.createWindow();
-    // this.hideWindow();
+    this.hideWindow();
   }
 
   calculateWindowDimension() {

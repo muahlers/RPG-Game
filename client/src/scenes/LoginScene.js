@@ -26,7 +26,9 @@ export default class LoginScene extends CredentialBaseScene {
       .then((response) => {
         if (response.status === '200') {
           console.log(response.status);
-          // refreshTokenInterval();
+          if (BYPASS_AUTH !== 'ENABLED') {
+            refreshTokenInterval();
+          }
           this.startScene('CharacterSelection');
         } else {
           console.log(response.status);

@@ -4,7 +4,7 @@ import PlayerContainer from '../classes/player/PlayerContainer';
 import Chest from '../classes/Chest';
 import Monster from '../classes/Monster';
 import Item from '../classes/Item';
-// import { getCookie } from '../utils/utils';
+import { getCookie } from '../utils/utils';
 import DialogWindow from '../classes/DialogWindow';
 
 export default class GameScene extends Phaser.Scene {
@@ -133,6 +133,15 @@ export default class GameScene extends Phaser.Scene {
     // inform that player score has changed.
     this.socket.on('updateScore', (gold) => {
       this.events.emit('updateScore', gold);
+      this.player.gold = gold;
+    });
+    // inform that other player has update his gold.
+    this.socket.on('updatePlayersScore', (playerId, gold) => {
+      this.otherPlayers.getChildren().forEach((otherPlayer) => {
+        if (otherPlayer.id === playerId) {
+          otherPlayer.gold = gold;
+        }
+      });
     });
     // inform that player has pick up an item.
     this.socket.on('updateItems', (playerObject) => {
@@ -212,8 +221,10 @@ export default class GameScene extends Phaser.Scene {
     // Security:
     // inform that the token as expire.
     this.socket.on('invalidToken', () => {
-      // window.alert('Token is not longer valid,please login again.');
-      // window.location.reload();
+      if (BYPASS_AUTH !== 'ENABLED') {
+        window.alert('Token is not longer valid,please login again.');
+        window.location.reload();
+      }
     });
   }
 
@@ -231,9 +242,12 @@ export default class GameScene extends Phaser.Scene {
     });
 
     // emit event to server that a new player joined.
-    // console.log(`from Cookie: ${getCookie('jwt')}`);
-    // this.socket.emit('newPlayer', getCookie('jwt'));
-    this.socket.emit('newPlayer', this.selectedCharacter);
+    let jwtCookie = '12345678';
+    if (BYPASS_AUTH !== 'ENABLED') {
+      jwtCookie = getCookie('jwt');
+    }
+
+    this.socket.emit('newPlayer', jwtCookie, this.selectedCharacter);
 
     // handles game resize.
     this.scale.on('resize', this.resize, this);
@@ -271,6 +285,7 @@ export default class GameScene extends Phaser.Scene {
       const message = this.inputMessageField.value;
       if (message) {
         this.inputMessageField.value = '';
+        // TODO
         // this.socket.emit('sendMessage', message, getCookie('jwt'));
         this.socket.emit('sendMessage', message);
       }
@@ -364,6 +379,11 @@ export default class GameScene extends Phaser.Scene {
         flipX: this.player.flipX,
       };
     }
+
+    newPlayer.setInteractive();
+    newPlayer.on('pointerdown', () => {
+      this.events.emit('showInventory', newPlayer, mainPlayer);
+    });
   }
 
   addCollisions() {
