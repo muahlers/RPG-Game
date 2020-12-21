@@ -141,6 +141,11 @@ export default class GameManager {
           }
         }
       });
+      // Player Drop a Item.
+      socket.on('playerDroppedItem', (itemId) => {
+        this.players[socket.id].removeItem(itemId);
+        socket.broadcast.emit('updatePlayersItems', socket.id, this.players[socket.id]);
+      });
       // A monster has been attacked, refresh.
       socket.on('monsterAttacked', (monsterId) => {
         // update the spawner

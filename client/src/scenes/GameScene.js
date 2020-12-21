@@ -476,4 +476,8 @@ export default class GameScene extends Phaser.Scene {
     this.cameras.resize(width, height);
     this.dialogWindow.resize(gameSize);
   }
+
+  sendDropItemMessage(itemId) {
+    this.socket.emit('playerDroppedItem', itemId);
+  }
 }
