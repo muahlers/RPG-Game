@@ -30,3 +30,5 @@ Para Deploy in Heroku:
 cambiar .env en Client (UrlServer & BYPASS_AUTH)
 cambiar .env en Server (BYPASS_AUTH)
 Run bundle.sh en Client
+
+grx :)
