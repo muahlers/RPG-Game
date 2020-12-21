@@ -7,12 +7,10 @@ Si hay mas cookies me falla la función para atrapar cookies [getCookie]
 Cookies y Credenciales de Token Caidos completamente
 
 Juego:
-Cuando un jugador mata a otro jugador su medidor de vida baja casi a cero, luego se recupera cuando se
-actualiza matando a otro enemigo.
 
 Un viejo jugador solo aparece en la pantalla del nuevo jugador cuando se mueve.
 
-Dos instancias tienen monstruos distintos.
+Dos instancias tienen monstruos distintos. Problema con el server en como maneja el movmeinto de los monstruos.
 
 Monstruos no tiene limites y salen del juego pero quedan activos.
 
@@ -23,3 +21,5 @@ problema con email como unique en chat Game manager => newMessage
 Ideas:
 
 explorar rooms in sockets para Chat
+
+Guardar el objeto jugador en la base de datos

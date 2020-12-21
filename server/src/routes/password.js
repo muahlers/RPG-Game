@@ -96,7 +96,9 @@ router.post('/reset-password', async (request, response, done) => {
     response.status(400).json({ message: 'invalid token', status: '400' });
   }
 
-  if (!request.body.password || !request.body.verifiedPassword || request.body.password !== request.body.verifiedPassword) {
+  if (!request.body.password
+    || !request.body.verifiedPassword
+    || request.body.password !== request.body.verifiedPassword) {
     response.status(400).json({ message: 'Verified Password Not Match', status: '400' });
   }
 

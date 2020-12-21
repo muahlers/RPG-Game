@@ -1,5 +1,8 @@
 #! /bin/sh
 npm run build
-rm -rf ../../../html/cliente-MMORPG
-mkdir ../../../html/cliente-MMORPG
-cp -R build/* ../../../html/cliente-MMORPG
+rm -rf ../server/public
+mkdir ../server/public
+cp -R build/* ../server/public/
+cd ..
+git status
+git subtree push --prefix server heroku master

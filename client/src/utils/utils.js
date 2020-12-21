@@ -14,7 +14,7 @@ export function postData(url, data = {}) {
     method: 'POST',
     mode: 'cors',
     cache: 'no-cache',
-    credentials: 'include', // needed for cookies, 'same-origin'
+    credentials: 'same-origin', // needed for cookies,  'include'
     headers: {
       'Content-Type': 'application/json',
     },

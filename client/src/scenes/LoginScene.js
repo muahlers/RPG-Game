@@ -27,7 +27,6 @@ export default class LoginScene extends CredentialBaseScene {
         if (response.status === '200') {
           console.log(response.status);
           // refreshTokenInterval();
-          console.log('out Inerval');
           this.startScene('CharacterSelection');
         } else {
           console.log(response.status);
