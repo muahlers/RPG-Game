@@ -3,8 +3,7 @@ El build que construi en Localhost no logra comunicarse con el servidor. Cors?
 No puedo mandar emails por Gmail
 
 Cookie:
-Si hay mas cookies me falla la función para atrapar cookies [getCookie]
-Cookies y Credenciales de Token Caidos completamente
+fallo en pasarle el jwt token a la funcion Fetch Data en /utils
 
 Juego:
 

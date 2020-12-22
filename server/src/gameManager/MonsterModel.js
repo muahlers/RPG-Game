@@ -12,63 +12,53 @@ export default class MonsterModel {
     this.health = health;
     this.maxHealth = health;
     this.attack = attack;
+    // Cordenantes where the monster appered.
+    this.xOrigin = x * 2;
+    this.yOrigin = y * 2;
+    this.radius = 128;
   }
 
   loseHealth(attack) {
     this.health -= attack;
   }
 
-  move(xMax, yMax) {
+  move() {
     const randomPosition = randomNumber(1, 8);
     const distance = 32;
-
-    switch (randomPosition) {
-      case 1:
-        if (this.x < xMax - distance) {
+    /*
+    if (Math.sqrt(Math.power([this.x - this.xOrigin, 2]) + Math.power([this.y - this.yOrigin, 2]))  < this.radius) {
+      switch (randomPosition) {
+        case 1:
           this.x += distance;
-        }
-        break;
-      case 2:
-        if (this.x > 0 + distance) {
+          break;
+        case 2:
           this.x -= distance;
-        }
-        break;
-      case 3:
-        if (this.y < yMax - distance) {
+          break;
+        case 3:
           this.y += distance;
-        }
-        break;
-      case 4:
-        if (this.y > 0 + distance) {
+          break;
+        case 4:
           this.y -= distance;
-        }
-        break;
-      case 5:
-        if (this.x < xMax - distance && this.y < yMax - distance) {
+          break;
+        case 5:
           this.x += distance;
           this.y += distance;
-        }
-        break;
-      case 6:
-        if (this.x < xMax - distance && this.y > 0 + distance) {
+          break;
+        case 6:
           this.x += distance;
           this.y -= distance;
-        }
-        break;
-      case 7:
-        if (this.x > 0 + distance && this.y < yMax - distance) {
+          break;
+        case 7:
           this.x -= distance;
           this.y += distance;
-        }
-        break;
-      case 8:
-        if (this.x > 0 + distance && this.y > 0 + distance) {
+          break;
+        case 8:
           this.x -= distance;
           this.y -= distance;
-        }
-        break;
-      default:
-        break;
-    }
+          break;
+        default:
+          break;
+      }
+    } */
   }
 }

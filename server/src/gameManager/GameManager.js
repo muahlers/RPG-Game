@@ -11,20 +11,17 @@ export default class GameManager {
   constructor(io) {
     // socket logic connection.
     this.io = io;
-
+    // Groups of Objects.
     this.spawners = {};
     this.chests = {};
     this.monsters = {};
     this.items = {};
     this.players = {};
-
+    // Starting Locations for spawners.
     this.playerLocations = [];
     this.chestLocations = {};
     this.monsterLocations = {};
     this.itemsLocations = itemsData.locations;
-    // Limites del Mapa en px;
-    this.xMaxMap = 1920 * 2;
-    this.yMaxMap = 1920 * 2;
   }
 
   setup() {
@@ -32,10 +29,10 @@ export default class GameManager {
     this.setupEventListener();
     this.setupSpawners();
 
-    this.intervalMonstersDisplay = setInterval(() => {
+    /* this.intervalMonstersDisplay = setInterval(() => {
       console.log('Monsters Group:');
       console.log(this.monsters);
-    }, 10000);
+    }, 10000); */
   }
 
   parseMapData() {
@@ -287,8 +284,6 @@ export default class GameManager {
         this.chestLocations[key],
         this.addChest.bind(this),
         this.deleteChest.bind(this),
-        this.xMaxMap,
-        this.yMaxMap,
       );
       this.spawners[spawner.id] = spawner;
     });
@@ -304,8 +299,6 @@ export default class GameManager {
         this.addMonster.bind(this),
         this.deleteMonster.bind(this),
         this.moveMonsters.bind(this),
-        this.xMaxMap,
-        this.yMaxMap,
       );
       this.spawners[spawner.id] = spawner;
     });
@@ -321,8 +314,6 @@ export default class GameManager {
       this.itemsLocations,
       this.addItem.bind(this),
       this.deleteItem.bind(this),
-      this.xMaxMap,
-      this.yMaxMap,
     );
     this.spawners[spawner.id] = spawner;
   }
