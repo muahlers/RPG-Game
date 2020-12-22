@@ -10,7 +10,7 @@ function getRandomValue() {
 }
 
 export default class Spawner {
-  constructor(config, spawnLocations, addObject, deleteObject, moveObjects) {
+  constructor(config, spawnLocations, addObject, deleteObject, moveObjects, xMaxMap, yMaxMap) {
     this.id = config.id;
     this.spawnInterval = config.spawnInterval;
     this.limit = config.limit;
@@ -19,6 +19,8 @@ export default class Spawner {
     this.addObject = addObject;
     this.deleteObject = deleteObject;
     this.moveObjects = moveObjects;
+    this.xMaxMap = xMaxMap;
+    this.yMaxMAp = yMaxMap;
 
     this.objectsCreated = [];
 
@@ -104,10 +106,10 @@ export default class Spawner {
   moveMonsters() {
     this.moveMonsterInterval = setInterval(() => {
       this.objectsCreated.forEach((monster) => {
-        monster.move();
+        monster.move(this.xMaxMap, this.yMaxMap);
       });
 
       this.moveObjects();
-    }, 1000);
+    }, 1500);
   }
 }

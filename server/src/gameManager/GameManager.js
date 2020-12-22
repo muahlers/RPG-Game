@@ -22,12 +22,20 @@ export default class GameManager {
     this.chestLocations = {};
     this.monsterLocations = {};
     this.itemsLocations = itemsData.locations;
+    // Limites del Mapa en px;
+    this.xMaxMap = 1920 * 2;
+    this.yMaxMap = 1920 * 2;
   }
 
   setup() {
     this.parseMapData();
     this.setupEventListener();
     this.setupSpawners();
+
+    this.intervalMonstersDisplay = setInterval(() => {
+      console.log('Monsters Group:');
+      console.log(this.monsters);
+    }, 10000);
   }
 
   parseMapData() {
@@ -84,19 +92,19 @@ export default class GameManager {
           // create a new Player
           console.log(`Player in Server: ${socket.id} frame: ${frame}`);
           this.spawnPlayer(socket.id, name, frame);
-          console.log('Emitinig Current Players');
+          console.log('Emiting Current Players');
           // send the players objecto to the new player
           socket.emit('currentPlayers', this.players);
-          console.log('Emitinig Current Monsters');
+          console.log('Emiting Current Monsters');
           // send the monsters objecto to the new player
           socket.emit('currentMonsters', this.monsters);
-          console.log('Emitinig Current Chests');
+          console.log('Emiting Current Chests');
           // send the chests objecto to the new player
           socket.emit('currentChests', this.chests);
-          console.log('Emitinig Current Chests');
+          console.log('Emiting Current Chests');
           // send the items objecto to the new player
           socket.emit('currentItems', this.items);
-          console.log('Emitinig Broadcasting to others players');
+          console.log('Emiting Broadcasting to others players');
           // inform the other players of the new player that joined.
           socket.broadcast.emit('spawnPlayer', this.players[socket.id], frame);
         } catch (error) {
@@ -279,6 +287,8 @@ export default class GameManager {
         this.chestLocations[key],
         this.addChest.bind(this),
         this.deleteChest.bind(this),
+        this.xMaxMap,
+        this.yMaxMap,
       );
       this.spawners[spawner.id] = spawner;
     });
@@ -294,6 +304,8 @@ export default class GameManager {
         this.addMonster.bind(this),
         this.deleteMonster.bind(this),
         this.moveMonsters.bind(this),
+        this.xMaxMap,
+        this.yMaxMap,
       );
       this.spawners[spawner.id] = spawner;
     });
@@ -309,6 +321,8 @@ export default class GameManager {
       this.itemsLocations,
       this.addItem.bind(this),
       this.deleteItem.bind(this),
+      this.xMaxMap,
+      this.yMaxMap,
     );
     this.spawners[spawner.id] = spawner;
   }
