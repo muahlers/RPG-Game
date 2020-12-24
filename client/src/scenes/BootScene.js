@@ -51,6 +51,6 @@ export default class BootScene extends Phaser.Scene {
 
   create() {
     console.log('Going to Game Scene');
-    this.scene.start('Game');
+    this.scene.start('Title');
   }
 }
