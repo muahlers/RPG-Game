@@ -181,10 +181,6 @@ export default class GameManager {
             this.players[socket.id].updateHealth(15);
             this.io.emit('updatePlayerHealth', socket.id, this.players[socket.id].health);
           } else {
-            // update the players health
-            this.players[socket.id].playerAttacked(attack);
-            this.io.emit('updatePlayerHealth', socket.id, this.players[socket.id].health);
-
             // update the monsters health
             this.io.emit('updateMonsterHealth', monsterId, this.monsters[monsterId].health);
 
@@ -201,6 +197,27 @@ export default class GameManager {
             }
           }
         }
+      });
+      // A player attack another player.
+      socket.on('monsterAttackedPlayer', (monsterId) => {
+        const attack = this.monsters[monsterId].attackPlayer();
+        const { gold } = this.players[socket.id];
+        console.log(`attacking Player: ${attack}`);
+        this.players[socket.id].playerAttacked(attack);
+        console.log(this.players[socket.id].health);
+
+        if (this.players[socket.id].health < 1) {
+          // substract player half gold
+          this.players[socket.id].updateGold(-gold / 2);
+          this.io.emit('updateScore', this.players[socket.id].gold);
+
+          // respawn player.
+          this.players[socket.id].respawn(this.players);
+          this.io.emit('respawnPlayer', this.players[socket.id]);
+        }
+
+
+        this.io.emit('updatePlayerHealth', socket.id, this.players[socket.id].health);
       });
 
       socket.on('attackedPlayer', (enemyPlayerId) => {
@@ -227,7 +244,7 @@ export default class GameManager {
             this.io.to(`${enemyPlayerId}`).emit('updateScore', this.players[enemyPlayerId].gold);
 
             // update player health
-            this.io.emit('updatePlayerHealth', socket.id, this.players[socket.id].health);
+            this.io.emit('updatePlayerHealth', enemyPlayerId, this.players[enemyPlayerId].health);
           } else {
             this.io.emit('updatePlayerHealth', enemyPlayerId, this.players[enemyPlayerId].health);
           }
@@ -280,6 +297,7 @@ export default class GameManager {
     Object.keys(this.chestLocations).forEach((key) => {
       config.id = `chest-${key}`;
       spawner = new Spawner(
+        this,
         config,
         this.chestLocations[key],
         this.addChest.bind(this),
@@ -294,6 +312,7 @@ export default class GameManager {
       config.spawnerType = SpawnerType.MONSTER;
 
       spawner = new Spawner(
+        this,
         config,
         this.monsterLocations[key],
         this.addMonster.bind(this),
@@ -310,6 +329,7 @@ export default class GameManager {
     config.spawnInterval = 1000 * 60 * 5;
 
     spawner = new Spawner(
+      this,
       config,
       this.itemsLocations,
       this.addItem.bind(this),

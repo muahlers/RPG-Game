@@ -41,7 +41,10 @@ export default class PlayerModel {
 
   playerAttacked(attack) {
     const damage = this.defense - attack;
-    this.updateHealth(damage);
+    console.log(`damage taken: ${damage}`);
+    if (damage < 0) {
+      this.updateHealth(damage);
+    }
   }
 
   updateGold(gold) {

@@ -116,7 +116,8 @@ export default class GameScene extends Phaser.Scene {
       this.monsters.getChildren().forEach((monster) => {
         Object.keys(monsters).forEach((monsterId) => {
           if (monster.id === monsterId) {
-            this.physics.moveToObject(monster, monsters[monsterId], 60);
+            // monster.drawOrigin(monsters[monsterId].x, monsters[monsterId].y);
+            this.physics.moveToObject(monster, monsters[monsterId], 80);
           }
         });
       });
@@ -395,6 +396,8 @@ export default class GameScene extends Phaser.Scene {
     this.physics.add.overlap(this.player, this.items, this.collectItem, null, this);
     // check for collisions between the monster group and the tiled blocked layer
     this.physics.add.collider(this.monsters, this.gameMap.blockedLayer);
+    // check for collisions between the monster group and player.
+    this.physics.add.collider(this.monsters, this.player, this.monsterAttack, null, this);
     // check for overlaps between the player's weapon and monster game objects
     this.physics.add.overlap(this.player.weapon, this.monsters, this.enemyOverlap, null, this);
     // check for collisions between the player and other players in the game.
@@ -448,6 +451,8 @@ export default class GameScene extends Phaser.Scene {
         monsterObject.id,
         monsterObject.health,
         monsterObject.maxHealth,
+        monsterObject.xOrigin,
+        monsterObject.yOrigin,
       );
       // add monster to monsters group
       this.monsters.add(monster);
@@ -471,6 +476,10 @@ export default class GameScene extends Phaser.Scene {
       this.player.swordHit = true;
       this.socket.emit('attackedPlayer', enemyPlayer.id);
     }
+  }
+
+  monsterAttack(player, monster) {
+    this.socket.emit('monsterAttackedPlayer', monster.id);
   }
 
   enemyOverlap(weapon, enemy) {

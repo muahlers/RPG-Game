@@ -1,12 +1,16 @@
 import * as Phaser from 'phaser';
 
 export default class Monster extends Phaser.Physics.Arcade.Image {
-  constructor(scene, x, y, key, frame, id, health, maxHealth) {
+  constructor(scene, x, y, key, frame, id, health, maxHealth, xOrigin, yOrigin) {
     super(scene, x, y, key, frame);
     this.scene = scene;
     this.id = id;
     this.health = health;
     this.maxHealth = maxHealth;
+    this.xOrigin = xOrigin;
+    this.yOrigin = yOrigin;
+
+    this.circle = new Phaser.Geom.Circle(this.xOrigin, this.yOrigin, 300);
 
     // enable physics
     this.scene.physics.world.enable(this);
@@ -58,5 +62,22 @@ export default class Monster extends Phaser.Physics.Arcade.Image {
 
   update() {
     this.updateHealthBar();
+  }
+
+  drawOrigin(x, y) {
+    if (!this.originCircle) {
+      this.originCircle = this.scene.add.graphics();
+      this.originCircle.clear();
+      this.originCircle.lineStyle(4, '0xffffff', 0.5);
+      this.originCircle.strokeCircleShape(this.circle);
+      console.log('Circle Draw!');
+    }
+    if (!this.monPosition) {
+      this.monPosition = this.scene.add.graphics();
+    }
+    this.monPosition.clear();
+    const rect = new Phaser.Geom.Rectangle(x, y, 10, 10);
+    this.monPosition.fillStyle('0xff00ff', 0.8);
+    this.monPosition.fillRectShape(rect);
   }
 }
