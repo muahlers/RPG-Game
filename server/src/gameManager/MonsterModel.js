@@ -126,9 +126,9 @@ export default class MonsterModel {
 
   attackPlayer() {
     if (this.canAttack) {
-      const timer = setTimeout(() => {
+      /* const timer = setTimeout(() => {
         this.canAttack = true;
-      }, 1000);
+      }, 1000); */
       this.canAttack = false;
       return this.attack;
     }
